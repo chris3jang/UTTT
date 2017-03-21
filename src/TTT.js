@@ -18,27 +18,25 @@ for(var i = 0; i < 3; i++) {
 
 class TTT extends Component {
 
-  constructor() {
-    super()
-    this.determineWhosTurn.bind(this)
-  };
-
   state = {
     xplayersturn: false,
   };
 
   determineWhosTurn() {
-    this.setState({xplayersturn: !this.state.xplayersturn})
-    return this.state.xplayersturn;
+    const newState = !this.state.xplayersturn;
+    this.setState({xplayersturn: newState});
+    return newState;
   }
-
-
 
 
   render() {
     return (
       <div>
-        <Square position={boardpositions[0]} myFunc={this.determineWhosTurn} key={boardpositions[0].objectID}></Square>
+        <Square 
+          position={boardpositions[0]} 
+          myFunc={this.determineWhosTurn}
+          key={boardpositions[0].objectID}>
+        </Square>
         {/*
         <table>
           <tbody>
