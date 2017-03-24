@@ -32,21 +32,101 @@ class TTT extends Component {
   handleMove(indexclicked) { //indexclicked is whatever is fed to position attribute in <Square/>
     const {turn, boardpositions} = this.state //these variables are undefined until this line, figure out why i put this line in this method and never in the constructor
     boardpositions[indexclicked] = turn ? 'X' : 'O'; //this line causes <Square/>'s content attribute to change immediately
-    this.setState({turn: !turn, boardpositions}); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
+    this.setState({turn: !turn, boardpositions}, this.didWin()); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
   };
 
+  didWin() {
+    console.log("didWin called")
+    const {boardpositions} = this.state;
+    console.log(boardpositions[0]);
+    console.log(boardpositions[1]);
+    console.log(boardpositions[2]);
+    if(boardpositions[0] === boardpositions[1] && boardpositions[1] === boardpositions[2]) {
+      console.log("somebody won");
+    }
+    /*
+    0 1 2
+    3 4 5
+    6 7 8
+    0 3 6
+    1 4 7
+    2 5 8
+    0 4 8
+    2 4 6
+    */
+  }
+
   handleMove = this.handleMove.bind(this);
+  didWin = this.didWin.bind(this);
 
   render() {
     const {boardpositions} = this.state
     return (
       <div>
-        <Square 
-          position={0} 
-          myFunc={this.handleMove}
-          key={0}
-          content={boardpositions[0]}>
-        </Square>
+        <table>
+          <tbody>
+            <tr>
+              <td><Square 
+                position={0} 
+                myFunc={this.handleMove}
+                key={0}
+                content={boardpositions[0]}>
+              </Square></td>
+              <td><Square 
+                position={1} 
+                myFunc={this.handleMove}
+                key={1}
+                content={boardpositions[1]}>
+              </Square></td>
+              <td><Square 
+                position={2} 
+                myFunc={this.handleMove}
+                key={2}
+                content={boardpositions[2]}>
+              </Square></td>
+            </tr>
+            <tr>
+              <td><Square 
+                position={3} 
+                myFunc={this.handleMove}
+                key={3}
+                content={boardpositions[3]}>
+              </Square></td>
+              <td><Square 
+                position={4} 
+                myFunc={this.handleMove}
+                key={4}
+                content={boardpositions[4]}>
+              </Square></td>
+              <td><Square 
+                position={5} 
+                myFunc={this.handleMove}
+                key={5}
+                content={boardpositions[5]}>
+              </Square></td>
+            </tr>
+            <tr>
+              <td><Square 
+                position={6} 
+                myFunc={this.handleMove}
+                key={6}
+                content={boardpositions[6]}>
+              </Square></td>
+              <td><Square 
+                position={7} 
+                myFunc={this.handleMove}
+                key={7}
+                content={boardpositions[7]}>
+              </Square></td>
+              <td><Square 
+                position={8} 
+                myFunc={this.handleMove}
+                key={8}
+                content={boardpositions[8]}>
+              </Square></td>
+            </tr>
+          </tbody>
+        </table>
         {/*
         <table>
           <tbody>

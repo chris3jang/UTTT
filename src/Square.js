@@ -4,7 +4,9 @@ import './Square.css';
 const Square = ({position, myFunc, content}) => {
 
   const handleClick = () => {
+    if(content === " ") {
       myFunc(position);
+    }
   };
 
   return (
