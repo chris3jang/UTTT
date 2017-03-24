@@ -1,34 +1,22 @@
 import React, { Component } from 'react';
 import './Square.css';
 
-const Square = ({position, myFunc}) => {
-
+const Square = ({position, myFunc, content}) => {
 
   const handleClick = () => {
-    console.log(position);
+      myFunc(position);
+  };
 
-    if(myFunc) {
-      console.log("fill X");
-    }
-    else console.log("fill Y");
+  return (
+    <div>
+      <button onClick={handleClick}>{content}</button>
+    </div>
+  );
 
-    };
-  
-
-
-    return (
-      <div>
-        <button onClick={handleClick}/>
-      </div>
-    );
-
-    
 }
 
-Square.propTypes = {
-  myFunc: React.PropTypes.func
-}
+//Square.propTypes = {
+//  myFunc: React.PropTypes.func
+//}
 
 export default Square;
-
-
