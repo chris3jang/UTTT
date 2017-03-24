@@ -36,24 +36,31 @@ class TTT extends Component {
   };
 
   didWin() {
-    console.log("didWin called")
-    const {boardpositions} = this.state;
-    console.log(boardpositions[0]);
-    console.log(boardpositions[1]);
-    console.log(boardpositions[2]);
-    if(boardpositions[0] === boardpositions[1] && boardpositions[1] === boardpositions[2]) {
-      console.log("somebody won");
+
+    const {turn, boardpositions} = this.state;
+    const winConditions = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    var winner = ""
+    if(turn) winner = "X"
+    else winner = "O"
+
+    for(const i=0; i<winConditions.length; i++) {
+      if(boardpositions[winConditions[i][0]] === boardpositions[winConditions[i][1]] &&
+        boardpositions[winConditions[i][1]] === boardpositions[winConditions[i][2]] &&
+        boardpositions[winConditions[i][0]] != " ") {
+        console.log(winner + " player won")
+      }
     }
-    /*
-    0 1 2
-    3 4 5
-    6 7 8
-    0 3 6
-    1 4 7
-    2 5 8
-    0 4 8
-    2 4 6
-    */
+    
   }
 
   handleMove = this.handleMove.bind(this);
