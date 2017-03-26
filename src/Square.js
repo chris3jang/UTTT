@@ -5,6 +5,7 @@ const Square = ({position, myFunc, content}) => {
 
   const handleClick = () => {
     if(content === " ") {
+      console.log(position);
       myFunc(position);
     }
   };
