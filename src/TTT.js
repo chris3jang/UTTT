@@ -4,11 +4,11 @@ import Square from './Square.js';
 
 class TTT extends Component {
 
+/*
   state = {
     turn: true, 
     boardpositions: [ " ", " ", " ", " ", " ", " ", " ", " ", " " ]
   };
-
   handleMove(indexclicked) { //indexclicked is whatever is fed to position attribute in <Square/>
     const {turn, boardpositions} = this.state //these variables are undefined until this line, figure out why i put this line in this method and never in the constructor
     boardpositions[indexclicked] = turn ? 'X' : 'O'; //this line causes <Square/>'s content attribute to change immediately
@@ -41,33 +41,39 @@ class TTT extends Component {
 
   handleMove = this.handleMove.bind(this);
   didWin = this.didWin.bind(this);
+*/
 
   render() {
-    const {boardpositions} = this.state
-    const dimension = [0, 1, 2]
-    const {boardset} = this.props
+    const {myFunc, boardpositions, boardset, boardnumber} = this.props
     var boardcontent;
     if (boardset) {
-      boardcontent = dimension.map((item, i) => 
-                      <tr>{dimension.map((item, j) => 
+      boardcontent = [0, 1, 2].map((item, i) => 
+                      <tr>{[0, 1, 2].map((item, j) => 
                         <td id="innerboard">
                           <Square 
-                            position={3*i+j} 
-                            myFunc={this.handleMove} 
-                            content={boardpositions[3*i+j]}>
+                            position={[boardnumber, 3*i+j]} 
+                            myFunc={myFunc} 
+                            content={boardpositions[boardnumber][3*i+j]}>
                           </Square>
                         </td>)}
                       </tr>)
     }
+
     else {
-      boardcontent = dimension.map((item, i) => 
-                      <tr>{dimension.map((item, j) => 
+      boardcontent = [0, 1, 2].map((item, i) =>
+                      <tr>{[0, 1, 2].map((item, j) => 
                         <td id="outerboard">
-                          <TTT boardset={true} ></TTT>
+                          <TTT 
+                            boardset={true}
+                            boardpositions={boardpositions}
+                            myFunc={myFunc}
+                            boardnumber={3*i+j}>
+                          </TTT>
                         </td>)}
-                      </tr>)
+                      </tr>)                 
     }
-    //figure out how to defin keys, key={(3*i+j).objectID}
+    //figure out how to define keys, key={(3*i+j).objectID}
+    
 
     return (
       <div>
@@ -140,7 +146,6 @@ class TTT extends Component {
       </div>
     );
   };
-    
-}
+} 
 
 export default TTT;
