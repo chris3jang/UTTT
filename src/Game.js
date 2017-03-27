@@ -28,7 +28,20 @@ class Game extends Component {
 		this.setState({turn: !turn, boardpositions}, this.didWin(indexclicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
     
     //still need to do magic box
-    this.setState({availableBoard: indexclicked[1], allBoards: false})
+    var aB = false
+
+    for(var i=0; i<9; i++) {
+      if(boardpositions[indexclicked[1]][i] === " ") {
+        break;
+      }
+      else if(i === 8) {
+        aB = true
+      }
+
+    }
+
+    
+    this.setState({availableBoard: indexclicked[1], allBoards: aB})
 
   };
 
