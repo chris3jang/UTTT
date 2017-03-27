@@ -16,14 +16,20 @@ class Game extends Component {
       [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
       [ " ", " ", " ", " ", " ", " ", " ", " ", " " ]
     ],
-    outerboard: [ " ", " ", " ", " ", " ", " ", " ", " ", " " ]
+    outerboard: [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+    availableBoard: 9,
+    allBoards: true
     
 	};
 
 	handleMove(indexclicked) { //indexclicked is whatever is fed to position attribute in <Square/>
-		const {turn, boardpositions} = this.state //these variables are undefined until this line, figure out why i put this line in this method and never in the constructor
+		const {turn, boardpositions, availableBoard, allBoards} = this.state //these variables are undefined until this line, figure out why i put this line in this method and never in the constructor
 		boardpositions[indexclicked[0]][indexclicked[1]] = turn ? 'X' : 'O'; //this line causes <Square/>'s content attribute to change immediately
 		this.setState({turn: !turn, boardpositions}, this.didWin(indexclicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
+    
+    //still need to do magic box
+    this.setState({availableBoard: indexclicked[1], allBoards: false})
+
   };
 
 
@@ -85,13 +91,15 @@ class Game extends Component {
   didWinOuter = this.didWinOuter.bind(this);
 
   render() {
-  	const {boardpositions} = this.state
+  	const {boardpositions, availableBoard, allBoards} = this.state
     return (
       <div>
       	<TTT 
       		boardset={false}
       		boardpositions={boardpositions}
-      		myFunc={this.handleMove}>
+      		myFunc={this.handleMove}
+          availableBoard={availableBoard}
+          allBoards={allBoards}>
       	</TTT>
       </div>
     );

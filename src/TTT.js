@@ -44,7 +44,7 @@ class TTT extends Component {
 */
 
   render() {
-    const {myFunc, boardpositions, boardset, boardnumber} = this.props
+    const {myFunc, boardpositions, boardset, boardnumber, availableBoard, allBoards} = this.props
     var boardcontent;
     if (boardset) {
       boardcontent = [0, 1, 2].map((item, i) => 
@@ -53,7 +53,9 @@ class TTT extends Component {
                           <Square 
                             position={[boardnumber, 3*i+j]} 
                             myFunc={myFunc} 
-                            content={boardpositions[boardnumber][3*i+j]}>
+                            content={boardpositions[boardnumber][3*i+j]}
+                            availableBoard={availableBoard}
+                            allBoards={allBoards}>
                           </Square>
                         </td>)}
                       </tr>)
@@ -67,7 +69,9 @@ class TTT extends Component {
                             boardset={true}
                             boardpositions={boardpositions}
                             myFunc={myFunc}
-                            boardnumber={3*i+j}>
+                            boardnumber={3*i+j}
+                            availableBoard={availableBoard}
+                            allBoards={allBoards}>
                           </TTT>
                         </td>)}
                       </tr>)                 
