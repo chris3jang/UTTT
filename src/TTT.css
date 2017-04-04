@@ -1,11 +1,28 @@
 #innerboard {
 	border: 1px solid black;
+	border-radius: 2px;
 	height: 50px;
 	width: 50px;
 }
 
+/*7A06C0 ECE62A*/
+
 #outerboard {
 	border: 3px solid black;
-	height: 180px;
-	width: 180px;
+	border-radius: 7px;
+	height: 160px;
+	width: 160px;
+}
+
+
+
+#center {
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+#squid {
+	background-color: red;
 }
