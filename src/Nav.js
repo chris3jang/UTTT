@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import './Nav.css';
 
-class Nav extends Component {
+const Nav = ({startNewGame}) => {
 
+	const newGame = () => {
+		console.log("play clicked");
+		startNewGame();
+	}
 
-  render() {
     return (
       	<div>
   			<ul>
-				<li><a href="#javascript:void(0)">Play</a></li>
+				<li><button onClick={newGame}>Play</button></li>
 				<li><a href="#javascript:void(0)">Rules</a></li>
 				<li className="dropdown">
 					<a href="javascript:void(0)" className="dropbtn">Settings</a>
@@ -22,7 +25,6 @@ class Nav extends Component {
       	</div>
 	      
     );
-  }
 }
 
 export default Nav;

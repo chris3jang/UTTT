@@ -1,18 +1,30 @@
 import React, { Component } from 'react';
 import Game from './Game';
 import Nav from './Nav';
-import Message from './Message';
 import './App.css';
 import './TTT.css';
 
 class App extends Component {
 
+	state = {
+		hasGameStarted: false
+	}
+
+	newGame() {
+		const {hasGameStarted} = this.state
+		this.setState({hasGameStarted: true});
+	}
+
+	newGame = this.newGame.bind(this);
+
   render() {
+  	const {hasGameStarted} = this.state
+  	console.log("hasGameStarted: " + hasGameStarted)
     return (
       	<div>
-      		<Nav></Nav>
+      		<Nav startNewGame={this.newGame}></Nav>
       		<h1>Ultimate Tic Tac Toe</h1>
-        	<Game></Game>
+        	<Game newGameHasStarted={hasGameStarted}></Game>
       	</div>
     );
   }

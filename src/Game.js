@@ -19,9 +19,16 @@ class Game extends Component {
     ],
     outerboard: [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
     availableBoard: 9,
-    allBoards: true,
-    
+    allBoards: false,
 	};
+
+  componentWillReceiveProps() {
+    const {newGameHasStarted} = this.props
+    console.log("newGameHasStarted: " + newGameHasStarted)
+    if(newGameHasStarted) {
+      this.setState({allBoards: true})
+    }
+  }
 
 	handleMove(indexclicked) { //indexclicked is whatever is fed to position attribute in <Square/>
 		const {turn, boardpositions, availableBoard, allBoards} = this.state //these variables are undefined until this line, figure out why i put this line in this method and never in the constructor
@@ -103,6 +110,7 @@ class Game extends Component {
 
   render() {
   	const {boardpositions, availableBoard, allBoards} = this.state
+    console.log("allBoards: " + allBoards)
     return (
       <div id="Game">
       	<TTT 
