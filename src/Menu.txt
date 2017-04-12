@@ -1,0 +1,11 @@
+Play:
+local game
+online game
+
+Rules:
+
+
+Settings:
+
+Fill out box vs Win box
+X/O vs color

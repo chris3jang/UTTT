@@ -8,7 +8,6 @@ class TTT extends Component {
     const {myFunc, boardpositions, boardset, boardnumber, availableBoard, allBoards} = this.props
     var boardcontent;
     var color;
-
     if (boardset) {
       //if(boardpositions[boardnumber][3*i+j] === "X") color = "xcolor"
       //if(boardpositions[boardnumber][3*i+j] === "O") color = "ocolor"
@@ -38,7 +37,7 @@ class TTT extends Component {
                          <tbody>
                          {[0, 1, 2].map((item, i) =>
                            <tr>{[0, 1, 2].map((item, j) => 
-                             <td className="outerboard" id={(availableBoard === 3*i+j || allBoards) ? "availableBoard" : "nothing"}>
+                             <td className="outerboard">
                                <TTT 
                                  boardset={true}
                                  boardpositions={boardpositions}
@@ -54,6 +53,7 @@ class TTT extends Component {
                      </div>
     }
     //figure out how to define keys, key={(3*i+j).objectID}
+    
 
     return (
       <div>

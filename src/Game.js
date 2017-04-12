@@ -24,7 +24,7 @@ class Game extends Component {
 
   componentWillReceiveProps() {
     const {newGameHasStarted} = this.props
-    console.log("newGameHasStarted: " + newGameHasStarted)
+    console.log("game newGameHasStarted: " + newGameHasStarted)
     if(newGameHasStarted) {
       this.setState({allBoards: true})
     }
