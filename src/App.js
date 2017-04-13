@@ -12,7 +12,7 @@ class App extends Component {
 
 	newGame() {
 		const {hasGameStarted} = this.state
-		this.setState({hasGameStarted: true}, this.render);
+		this.setState({hasGameStarted: true});
 	}
 
 	newGame = this.newGame.bind(this);
@@ -22,7 +22,7 @@ class App extends Component {
   	console.log("hasGameStarted: " + hasGameStarted)
     return (
       	<div>
-      		<Nav startNewGame={this.newGame} reRender={this.reRender} newGameHasStarted={hasGameStarted}></Nav>
+      		<Nav startNewGame={this.newGame} newGameHasStarted={hasGameStarted}></Nav>
       		<h1>Ultimate Tic Tac Toe</h1>
         	<Game newGameHasStarted={hasGameStarted}></Game>
       	</div>

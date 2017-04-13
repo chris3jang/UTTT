@@ -6,7 +6,9 @@ const Nav = ({startNewGame, newGameHasStarted}) => {
 	const newGame = () => {
 		console.log("play clicked");
 		console.log("nav newGameHasStarted: " + newGameHasStarted)
-		startNewGame();
+		if(!newGameHasStarted) {
+			startNewGame();
+		}
 	}
 
     return (

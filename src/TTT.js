@@ -5,7 +5,7 @@ import Square from './Square.js';
 class TTT extends Component {
 
   render() {
-    const {myFunc, boardpositions, boardset, boardnumber, availableBoard, allBoards} = this.props
+    const {myFunc, boardpositions, boardset, boardnumber, availableBoard, allBoards, outerboard} = this.props
     var boardcontent;
     var color;
 
@@ -38,7 +38,8 @@ class TTT extends Component {
                          <tbody>
                          {[0, 1, 2].map((item, i) =>
                            <tr>{[0, 1, 2].map((item, j) => 
-                             <td className="outerboard" id={(availableBoard === 3*i+j || allBoards) ? "availableBoard" : "nothing"}>
+                             <td className={"outerboard"+ ((availableBoard === 3*i+j || allBoards) ? " bold" : "") + ((outerboard[3*i+j] === 'X') ? " xcolor" : "") + ((outerboard[3*i+j] === '0') ? " ocolor" : "")}>
+                               {}
                                <TTT 
                                  boardset={true}
                                  boardpositions={boardpositions}

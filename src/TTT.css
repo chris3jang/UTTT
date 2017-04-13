@@ -14,9 +14,18 @@
 	width: 160px;
 }
 
-#availableBoard {
+.bold {
 	border: 7px solid black !important;
 }
+
+.xcolor {
+	border-color: #7A06C0 !important;
+}
+
+.ocolor {
+	border-color: #ECE62A !important;
+}
+
 
 #nothing {
 

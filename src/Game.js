@@ -22,8 +22,8 @@ class Game extends Component {
     allBoards: false,
 	};
 
-  componentWillReceiveProps() {
-    const {newGameHasStarted} = this.props
+  componentWillReceiveProps(nextProps) {
+    const {newGameHasStarted} = nextProps
     console.log("game newGameHasStarted: " + newGameHasStarted)
     if(newGameHasStarted) {
       this.setState({allBoards: true})
@@ -73,7 +73,9 @@ class Game extends Component {
         && boardpositions[indexclicked[0]][winConditions[i][1]] 
         !== " ") {
           console.log("won an inner box");
-          outerboard[indexclicked[0]] = turn ? 'X' : '0';
+          if(outerboard[indexclicked[0]] === " ") {
+            outerboard[indexclicked[0]] = turn ? 'X' : '0';
+          }
           this.setState(outerboard, this.didWinOuter(indexclicked[0]))
           break;
         }
@@ -109,7 +111,7 @@ class Game extends Component {
   didWinOuter = this.didWinOuter.bind(this);
 
   render() {
-  	const {boardpositions, availableBoard, allBoards} = this.state
+  	const {boardpositions, availableBoard, allBoards, outerboard} = this.state
     console.log("allBoards: " + allBoards)
     return (
       <div id="Game">
@@ -118,7 +120,8 @@ class Game extends Component {
       		boardpositions={boardpositions}
       		myFunc={this.handleMove}
           availableBoard={availableBoard}
-          allBoards={allBoards}>
+          allBoards={allBoards}
+          outerboard={outerboard}>
       	</TTT>
       </div>
     );
