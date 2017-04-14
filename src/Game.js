@@ -5,7 +5,7 @@ import './Game.css';
 class Game extends Component {
 
 	state = {
-		turn: true,
+		turn: null,
 		boardpositions: [
       [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
       [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
@@ -20,13 +20,43 @@ class Game extends Component {
     outerboard: [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
     availableBoard: 9,
     allBoards: false,
+    playerJustWonInnerBox: false,
 	};
+
+  isBoardBlank() {
+    const {boardpositions} = this.state
+    for(var i=0; i < 9; i++) {
+      for(var j=0; j < 9; j++) {
+        if(boardpositions[i][j] !== " ") {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  determineHeading() {
+    var innerboxwinner = ""
+    const {turn, playerJustWonInnerBox} = this.state
+    console.log("playerjustwoninnerbox " + playerJustWonInnerBox)
+    if(playerJustWonInnerBox) {
+      innerboxwinner = (!turn ? "X" : "O") + " Player wins a board. "
+      console.log(innerboxwinner)
+    }
+
+    if(turn === null) {
+      return "";
+    }
+    else if(turn) {
+      return innerboxwinner + "X Player's turn"
+    }
+    else return innerboxwinner + "O Player's turn"
+  }
 
   componentWillReceiveProps(nextProps) {
     const {newGameHasStarted} = nextProps
-    console.log("game newGameHasStarted: " + newGameHasStarted)
-    if(newGameHasStarted) {
-      this.setState({allBoards: true})
+    if(newGameHasStarted && this.isBoardBlank()) {
+      this.setState({turn: true, allBoards: true})
     }
   }
 
@@ -45,6 +75,7 @@ class Game extends Component {
         aB = true
       }
     }
+
     this.setState({availableBoard: indexclicked[1], allBoards: aB})
 
   };
@@ -52,7 +83,7 @@ class Game extends Component {
 
 
   didWin(indexclicked) {
-    const {turn, boardpositions, outerboard} = this.state;
+    const {turn, boardpositions, outerboard, playerJustWonInnerBox} = this.state;
     const winConditions = [
       [0, 1, 2],
       [3, 4, 5],
@@ -73,13 +104,23 @@ class Game extends Component {
         && boardpositions[indexclicked[0]][winConditions[i][1]] 
         !== " ") {
           console.log("won an inner box");
+          if(outerboard[indexclicked[0]] === ' ') {
+            this.setState({playerJustWonInnerBox: true})
+          }
+          else {
+            this.setState({playerJustWonInnerBox: false})
+          }
           if(outerboard[indexclicked[0]] === " ") {
             outerboard[indexclicked[0]] = turn ? 'X' : '0';
           }
           this.setState(outerboard, this.didWinOuter(indexclicked[0]))
           break;
         }
+      this.setState({playerJustWonInnerBox: false})
     }
+
+    //this.setState({playerJustWonInnerBox: false})
+
   }
 
   //check for win on outer board only when an inner box is won
@@ -105,16 +146,19 @@ class Game extends Component {
     }
   }
 
+  isBoardBlank = this.isBoardBlank.bind(this);
+
   handleMove = this.handleMove.bind(this);
   didWin = this.didWin.bind(this);
   //didWinInner = this.didWinInner.bind(this);
   didWinOuter = this.didWinOuter.bind(this);
 
   render() {
-  	const {boardpositions, availableBoard, allBoards, outerboard} = this.state
+  	const {boardpositions, availableBoard, allBoards, outerboard, turn} = this.state
     console.log("allBoards: " + allBoards)
     return (
       <div id="Game">
+        <h2>{this.determineHeading()}</h2>
       	<TTT 
       		boardset={false}
       		boardpositions={boardpositions}

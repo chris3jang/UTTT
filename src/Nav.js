@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Nav.css';
 
-const Nav = ({startNewGame, newGameHasStarted}) => {
+const Nav = ({startNewGame, newGameHasStarted, rules}) => {
 
 	const newGame = () => {
 		console.log("play clicked");
@@ -11,11 +11,15 @@ const Nav = ({startNewGame, newGameHasStarted}) => {
 		}
 	}
 
+	const openRules = () => {
+		rules();
+	}
+
     return (
       	<div>
   			<ul>
 				<li><a href="#javascript:void(0)" onClick={newGame}>Play</a></li>
-				<li><a href="#javascript:void(0)">Rules</a></li>
+				<li><a href="#javascript:void(0)" onClick={openRules}>Rules</a></li>
 				<li className="dropdown">
 					<a href="javascript:void(0)" className="dropbtn">Settings</a>
 					<div className="dropdown-content">
