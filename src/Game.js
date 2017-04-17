@@ -21,6 +21,7 @@ class Game extends Component {
     availableBoard: 9,
     allBoards: false,
     playerJustWonInnerBox: false,
+    playerJustWonGame: false,
 	};
 
   isBoardBlank() {
@@ -36,12 +37,16 @@ class Game extends Component {
   }
 
   determineHeading() {
+    const {turn, playerJustWonInnerBox, playerJustWonGame} = this.state
     var innerboxwinner = ""
-    const {turn, playerJustWonInnerBox} = this.state
-    console.log("playerjustwoninnerbox " + playerJustWonInnerBox)
+
     if(playerJustWonInnerBox) {
       innerboxwinner = (!turn ? "X" : "O") + " Player wins a board. "
       console.log(innerboxwinner)
+    }
+
+    if(playerJustWonGame) {
+      return (!turn ? "X" : "O") + " wins the game!"
     }
 
     if(turn === null) {
@@ -125,7 +130,7 @@ class Game extends Component {
 
   //check for win on outer board only when an inner box is won
   didWinOuter(outerindexclicked) {
-    const {outerboard} = this.state
+    const {outerboard, playerJustWonGame, availableBoard, allBoards} = this.state
     const winconditions = [
       [0, 1, 2],
       [3, 4, 5],
@@ -140,8 +145,9 @@ class Game extends Component {
       if(outerboard[winconditions[i][0]] === outerboard[winconditions[i][1]] &&
         outerboard[winconditions[i][1]] === outerboard[winconditions[i][2]] &&
         outerboard[winconditions[i][0]] !== " ") {
-          this.setState({availableBoard: 9, allBoards: false})
+          this.setState({availableBoard: 9, allBoards: false, playerJustWonGame: true})
           console.log("won an outerbox/the game")
+          break;
         }
     }
   }
