@@ -4,6 +4,19 @@ import Square from './Square.js';
 
 class TTT extends Component {
 
+wrapBoard(element) {
+  return <div>
+           <table>
+             <tbody id="center">
+             {[0, 1, 2].map((item, i) => 
+               <tr>{[0, 1, 2].map((item, j) => 
+                 element(i, j))}
+               </tr>)}
+             </tbody>
+           </table>
+         </div>
+}
+
   render() {
     const {myFunc, boardpositions, boardset, boardnumber, availableBoard, allBoards, outerboard} = this.props
     var boardcontent;
@@ -30,6 +43,7 @@ class TTT extends Component {
                          </tbody>
                        </table>
                      </div>
+                             
     }
 
     else {
