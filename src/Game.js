@@ -38,7 +38,7 @@ class Game extends Component {
 
   determineHeading() {
     const {turn, playerJustWonInnerBox, playerJustWonGame} = this.state
-    var innerboxwinner = ""
+    var innerboxwinner = " "
 
     if(playerJustWonInnerBox) {
       innerboxwinner = (!turn ? "X" : "O") + " Player wins a board. "
@@ -166,7 +166,6 @@ class Game extends Component {
   }
 
   isBoardBlank = this.isBoardBlank.bind(this);
-te
   handleMove = this.handleMove.bind(this);
   didWin = this.didWin.bind(this);
   //didWinInner = this.didWinInner.bind(this);

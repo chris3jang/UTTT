@@ -4,33 +4,29 @@ import Square from './Square.js';
 
 class TTT extends Component {
 
-wrapBoard(element) {
-  return <div>
-           <table>
-             <tbody id="center">
-             {[0, 1, 2].map((item, i) => 
-               <tr>{[0, 1, 2].map((item, j) => 
-                 element(i, j))}
-               </tr>)}
-             </tbody>
-           </table>
-         </div>
-}
-
   render() {
     const {myFunc, boardpositions, boardset, boardnumber, availableBoard, allBoards, outerboard} = this.props
     var boardcontent;
     var color;
 
+    function wrapBoard(renderElement) {
+      return <div>
+               <table>
+                 <tbody id="center">
+                 {[0, 1, 2].map((item, i) => 
+                   <tr>{[0, 1, 2].map((item, j) => 
+                     renderElement(i, j))}
+                   </tr>)}
+                 </tbody>
+               </table>
+             </div>
+    }
+    
+
     if (boardset) {
       //if(boardpositions[boardnumber][3*i+j] === "X") color = "xcolor"
       //if(boardpositions[boardnumber][3*i+j] === "O") color = "ocolor"
-      boardcontent = <div>
-                       <table>
-                         <tbody id="center">
-                         {[0, 1, 2].map((item, i) => 
-                           <tr>{[0, 1, 2].map((item, j) => 
-                             <td className="innerboard">
+      boardcontent = wrapBoard((i, j) => <td className="innerboard">
                                <Square
                                  position={[boardnumber, 3*i+j]} 
                                  myFunc={myFunc} 
@@ -38,17 +34,13 @@ wrapBoard(element) {
                                  availableBoard={availableBoard}
                                  allBoards={allBoards}>
                                </Square>
-                             </td>)}
-                           </tr>)}
-                         </tbody>
-                       </table>
-                     </div>
+                             </td>)
                              
     }
 
     else {
       boardcontent = <div>
-                       <table>
+                       <table className="bigTable">
                          <tbody>
                          {[0, 1, 2].map((item, i) =>
                            <tr>{[0, 1, 2].map((item, j) => 

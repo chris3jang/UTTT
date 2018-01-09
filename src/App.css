@@ -26,3 +26,8 @@ font: 14px/1 "Open Sans",Helvetica,Arial,sans-serif; BR
 font-family: Walfork,Walsheim,Helvetica Neue,Helvetica,Arial,sans-serif; PF
 
 */
+
+h1, h2 {
+  text-align: center;
+}
+

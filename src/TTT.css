@@ -1,8 +1,13 @@
+.bigTable, .lilTable {
+	margin: auto;
+}
+
 .innerboard {
 	border: 1px solid black;
 	border-radius: 2px;
 	height: 50px;
 	width: 50px;
+	padding: 0;
 }
 
 /*7A06C0 ECE62A*/
@@ -14,8 +19,31 @@
 	width: 160px;
 }
 
+/*
+
+render something like this as a child of outerboards
+when the board has been won
+
+must add position:relative; to outerboard for abs
+positioning
+
+<div class="won" style="
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: white;
+    font-weight: bold;
+    background-color: rgba(0,0,0,.5);
+    font-size: 100px;
+    text-align: center;
+    padding-top: 29px;
+">X</div>
+*/
+
 .bold {
-	border: 7px solid black !important;
+	box-shadow: 0 0 30px #6A6A6A;
 }
 
 .xcolor {
