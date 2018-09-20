@@ -1,13 +1,27 @@
 import React, { Component } from 'react';
 import './Nav.css';
 
-const Nav = ({startNewGame, newGameHasStarted, rules, gameSettings, setToOne, setToThree, setToMagic, setToSelected}) => {
+import openSocket from 'socket.io-client';
+const socket = openSocket('http://localhost:8080');
 
-	const newGame = () => {
+//import { createGameOnline }
+
+const Nav = ({startNewGame, newGameHasStarted, rules, gameSettings, setToOne, setToThree, setToMagic, setToSelected, openOnlineForm}) => {
+
+	const newGame = (action) => {
 		console.log("play clicked");
 		console.log("nav newGameHasStarted: " + newGameHasStarted)
+
 		if(!newGameHasStarted) {
-			startNewGame();
+
+			if(action == 'local') {
+				startNewGame();
+			}
+			if(action == 'online') {
+				console.log("online")
+				openOnlineForm()
+			}
+
 		}
 	}
 
@@ -39,6 +53,14 @@ const Nav = ({startNewGame, newGameHasStarted, rules, gameSettings, setToOne, se
 		}
 	}
 
+	const local = () => {
+		newGame('local')
+	}
+
+	const online = () => {
+		newGame('online')
+	}
+
 
 	var one = "";
 	var three = "";
@@ -67,7 +89,13 @@ const Nav = ({startNewGame, newGameHasStarted, rules, gameSettings, setToOne, se
     return (
       	<div>
   			<ul>
-				<li><a href="#javascript:void(0)" onClick={newGame}>Play</a></li>
+				<li className="dropdown">
+					<a href="javascript:void(0)" className="dropbtn">Play</a>
+					<div className="dropdown-content">
+					      <a href="#" className={local} onClick={local}>Local</a>
+					      <a href="#" className={online} onClick={online}>Online</a>
+					</div>
+				</li>
 				<li><a href="#javascript:void(0)" onClick={openRules}>Rules</a></li>
 				<li className="dropdown">
 					<a href="javascript:void(0)" className="dropbtn">Settings</a>
