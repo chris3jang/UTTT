@@ -1,8 +1,16 @@
 import openSocket from 'socket.io-client';
-const  socket = openSocket('http://localhost:5000');
+const socket = openSocket('http://localhost:8080');
 
-function createOnlineGame(cb) {
-  socket.on('timer', timestamp => cb(null, timestamp));
+module.exports = {
+	listenForSocketsFromClient = (cb) => {
+		socket.on('newGameCreated', data => {
+			cb(null, data)
+		}
+	}
 }
 
-export { createOnlineGame };
+
+
+
+
+export { listenForSocketsFromClient };

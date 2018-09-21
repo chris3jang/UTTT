@@ -7,6 +7,8 @@ import './TTT.css';
 
 import OnlineGameHandler from './OnlineGameHandler'
 
+//import { listenForSocketsFromClient } from './api.js'
+
 import openSocket from 'socket.io-client';
 const socket = openSocket('http://localhost:8080');
 
@@ -16,16 +18,42 @@ class App extends Component {
 		hasGameStarted: false,
 		isModalOpen: false,
 		gameSettings: "three",
+
 		onlineHandlerForm: false,
-		onlineHandlerMessageObj: {num: 0, arg: null}
+		onlineHandlerMessageObj: {num: 0, arg: null},
+		roomID: null,
+		player: null,
+		turnPlayedData: null
 	}
 
 	componentDidMount() {
 		const self = this
-		socket.on('newGameCreated', function(data){
+		socket.on('newGameCreated', data => {
+			console.log("IHEARD NEW GAME WAS CREATED")
+			console.log(data, "data")
 			const num = self.state.onlineHandlerMessageObj.num
-	  		self.setState({ onlineHandlerMessageObj: { num: num+1 , arg: data} })
+			const roomID = data.room
+			console.log('roomID', roomID)
+	  		self.setState({ onlineHandlerMessageObj: { num: num+1 , arg: data}, roomID: roomID})
+
 		});
+
+		socket.on('player1', data => {
+			console.log("client player1 heared")
+			self.setState({hasGameStarted: true, player: 1, onlineHandlerForm: false})
+		})
+
+		socket.on('player2', data => {
+			console.log("client player2 heared")
+			self.setState({hasGameStarted: true, player: 2, onlineHandlerForm: false})
+		})
+
+		//figure out how to make this work inside child component
+		socket.on('turnPlayed', data => {
+			console.log("turnPlayedData": data)
+			self.setState({turnPlayedData: data})
+		})
+		
 	}
 
 	newGame() {
@@ -35,7 +63,7 @@ class App extends Component {
 
 	newOnlineGame() {
 		const {onlineHandlerForm} = this.state
-		this.setState({onlineHandlerForm: true})
+		this.setState({onlineHandlerForm: true, roomID: true})
 	}
 
 	closeOnlineForm() {
@@ -79,11 +107,12 @@ class App extends Component {
 		console.log(e.target[0].value, 'e.target[0]')
 		console.log(e.target[1].value, 'e.target[1]')
 		if(e.target[0].value && !e.target[1].value) {
-			console.log("name only")
+			console.log("*()*()", this.state.onlineHandlerMessageObj)
 			socket.emit('createGameOnline', {name: e.target[0].value})
 		}
 		if(e.target[1].value && e.target[0].value) {
 			console.log("gameid only")
+			this.setState({roomID: e.target[1].value})
 			socket.emit('joinExistingGame', {name: e.target[0].value, room: e.target[1].value})
 		}
 	}
@@ -129,7 +158,7 @@ class App extends Component {
   	if(onlineHandlerMessageObj.num == 1) {
   		onlineHandlerMessage = 
   		<p>Please ask your friend to enter Game ID: 
-		    {this.state.onlineHandlerMessageObj.arg.room}. Waiting for player 2...'</p>
+		    {this.state.roomID}. Waiting for player 2...'</p>
 		  console.log(onlineHandlerMessage)
   	}
   	
@@ -160,11 +189,16 @@ class App extends Component {
       		<h1>Ultimate Tic Tac Toe</h1>
         	<Game 
         		newGameHasStarted={hasGameStarted}
-        		gameSettings={gameSettings}>
+        		gameSettings={gameSettings}
+        		online={this.state.online}
+        		player={this.state.player}
+        		roomID={this.state.roomID}
+        		turnPlayedData={this.state.turnPlayedData}>
         	</Game>
       	</div>
     );
   }
 }
+
 
 export default App;

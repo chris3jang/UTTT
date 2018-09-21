@@ -23,7 +23,7 @@ io.on('connection', function(socket){
 	 */
 	socket.on('createGameOnline', function(data){
 	  //do something with data
-	  console.log('data', data)
+	  console.log('CREATEGAMEONLINE data', data)
 	  socket.join('room-' + ++rooms);
 	  socket.emit('newGameCreated', {name: data.name, room: 'room-'+rooms});
 	});
@@ -32,9 +32,11 @@ io.on('connection', function(socket){
 	 * Connect the Player 2 to the room he requested. Show error if room full.
 	 */
 	socket.on('joinExistingGame', function(data){
+		console.log("HEERERERE")
+		socket.emit('newGameCreated', {name: data.name, room: 'room-'+rooms});
 	  var room = io.nsps['/'].adapter.rooms[data.room];
 	  if( room && room.length == 1){
-	  	console.log("here")
+	  	console.log("JOINEXISTING")
 	  	console.log('data.room', data.room)
 	  	console.log('data.name', data.name)
 	    socket.join(data.room);
@@ -50,7 +52,9 @@ io.on('connection', function(socket){
 	 * Handle the turn played by either player and notify the other. 
 	 */
 	socket.on('playTurn', function(data){
-	  socket.broadcast.to(data.room).emit('turnPlayed', {
+		console.log("TURN PLAYED")
+		console.log(data)
+	  socket.to(data.room).emit('turnPlayed', {
 	    tile: data.tile,
 	    room: data.room
 	  });
