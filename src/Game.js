@@ -25,8 +25,7 @@ class Game extends Component {
     allBoards: false,
     playerJustWonInnerBox: false,
     playerJustWonGame: false,
-    waitingForOnlineOpponent: null,
-    room: null
+    waitingForOnlineOpponent: null
 	};
 
   componentDidMount() {
@@ -51,24 +50,46 @@ class Game extends Component {
 
   determineHeading() {
     const {turn, playerJustWonInnerBox, playerJustWonGame} = this.state
-    var innerboxwinner = " "
 
-    if(playerJustWonInnerBox) {
-      innerboxwinner = (!turn ? "X" : "O") + " Player wins a board. "
-      console.log(innerboxwinner)
-    }
+    if(!this.props.roomID) {
+      let innerboxwinner = " "
 
-    if(playerJustWonGame) {
-      return (!turn ? "X" : "O") + " wins the game!"
-    }
+      if(playerJustWonInnerBox) {
+        innerboxwinner = (!turn ? "X" : "O") + " Player wins a board. "
+        console.log(innerboxwinner)
+      }
 
-    if(turn === null) {
-      return "";
+      if(playerJustWonGame) {
+        return (!turn ? "X" : "O") + " wins the game!"
+      }
+
+      if(turn === null) {
+        return "";
+      }
+      else if(turn) {
+        return innerboxwinner + "X Player's turn"
+      }
+      else return innerboxwinner + "O Player's turn"
     }
-    else if(turn) {
-      return innerboxwinner + "X Player's turn"
+    else {
+      console.log("DETERMINEHEADING")
+      let innerboxwinner = " "
+      if(playerJustWonInnerBox) {
+        innerboxwinner = (turn ? "You win" : "Your opponent wins") + " a board. "
+      }
+      if(playerJustWonGame) {
+        return (this.state.waitingForOnlineOpponent ? "You win" : "Your opponent wins") + "  the game!"
+      }
+
+      if(!this.props.newGameHasStarted) {
+        return "";
+      }
+      else if(!this.state.waitingForOnlineOpponent) {
+        return innerboxwinner + "Your turn"
+      }
+      else return innerboxwinner + "Your opponent's turn"
     }
-    else return innerboxwinner + "O Player's turn"
+    
   }
 
   componentWillReceiveProps(nextProps) {
@@ -212,7 +233,7 @@ class Game extends Component {
             this.setState({playerJustWonInnerBox: false})
           }
           if(outerboard[squareClicked[0]] === " ") {
-            outerboard[squareClicked[0]] = turn ? 'X' : '0';
+            outerboard[squareClicked[0]] = !this.props.roomID ? (turn ? 'X' : 'O') : (!this.state.waitingForOnlineOpponent ? (turn ? 'X' : 'O') : (turn ? 'O' : 'X'));
           }
           this.setState(outerboard)
           if(gameSettings === "three") {
