@@ -10,11 +10,15 @@ const Square = ({position, myFunc, content, availableBoard, allBoards}) => {
     }
   };
 
-  var color;
+  /*
+  let color;
   if(content === "X") color = "xcolor"
   if(content === "O") color = "ocolor"
 
   return <button className="button" id={color} onClick={handleClick}>{content}</button>;
+  */
+
+  return <button className="button" onClick={handleClick}>{content}</button>;
 
 }
 

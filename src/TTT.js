@@ -24,8 +24,6 @@ class TTT extends Component {
     
 
     if (boardset) {
-      //if(boardpositions[boardnumber][3*i+j] === "X") color = "xcolor"
-      //if(boardpositions[boardnumber][3*i+j] === "O") color = "ocolor"
       boardcontent = wrapBoard((i, j) => <td className="innerboard">
                                <Square
                                  position={[boardnumber, 3*i+j]} 
@@ -45,7 +43,6 @@ class TTT extends Component {
                          {[0, 1, 2].map((item, i) =>
                            <tr>{[0, 1, 2].map((item, j) => 
                              <td className={"outerboard"+ ((availableBoard === 3*i+j || allBoards) ? " bold" : "") + ((outerboard[3*i+j] === 'X') ? " xcolor" : "") + ((outerboard[3*i+j] === 'O') ? " ocolor" : "")}>
-                               {}
                                <TTT 
                                  boardset={true}
                                  boardpositions={boardpositions}
@@ -60,7 +57,6 @@ class TTT extends Component {
                        </table>
                      </div>
     }
-    //figure out how to define keys, key={(3*i+j).objectID}
 
     return (
       <div>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom'
 import Modal from './Modal';
 import Game from './Game';
 import Nav from './Nav';
@@ -7,20 +8,18 @@ import './TTT.css';
 
 import OnlineGameHandler from './OnlineGameHandler'
 
-//import { listenForSocketsFromClient } from './api.js'
-
 import openSocket from 'socket.io-client';
 const socket = openSocket('http://localhost:8080');
 
-class App extends Component {
+class App extends React.Component {
 
 	state = {
 		hasGameStarted: false,
-		isModalOpen: false,
 		gameSettings: "three",
 
-		onlineHandlerForm: false,
-		onlineHandlerMessageObj: {num: 0, arg: null},
+		modal: null,
+
+		onlineRoomCreateDirections: 'createGame',
 		roomID: null,
 		player: null,
 		turnPlayedData: null
@@ -31,21 +30,18 @@ class App extends Component {
 		socket.on('newGameCreated', data => {
 			console.log("IHEARD NEW GAME WAS CREATED")
 			console.log(data, "data")
-			const num = self.state.onlineHandlerMessageObj.num
-			const roomID = data.room
-			console.log('roomID', roomID)
-	  		self.setState({ onlineHandlerMessageObj: { num: num+1 , arg: data}, roomID: roomID})
+	  		self.setState({ onlineRoomCreateDirections: 'joinRoom', roomID: data.room})
 
 		});
 
 		socket.on('player1', data => {
 			console.log("client player1 heared")
-			self.setState({hasGameStarted: true, player: 1, onlineHandlerForm: false})
+			self.setState({hasGameStarted: true, player: 1, modal: null})
 		})
 
 		socket.on('player2', data => {
 			console.log("client player2 heared")
-			self.setState({hasGameStarted: true, player: 2, onlineHandlerForm: false})
+			self.setState({hasGameStarted: true, player: 2, modal: null})
 		})
 
 		//figure out how to make this work inside child component
@@ -56,90 +52,47 @@ class App extends Component {
 		
 	}
 
-	newGame() {
-		const {hasGameStarted} = this.state
-		this.setState({hasGameStarted: true});
+
+
+	selectMenuOption(action) {
+		const {gameSettings, hasGameStarted} = this.state
+		if(action === 'one' || action === 'three' || action === 'magic') this.setState({gameSettings: action})
+		if(action === 'local') this.setState({hasGameStarted: true});
+		if(action === 'online') this.setState({modal: "online", roomID: true});
+		if(action === 'rules') this.setState({modal: "rules"})
 	}
 
-	newOnlineGame() {
-		const {onlineHandlerForm} = this.state
-		this.setState({onlineHandlerForm: true, roomID: true})
-	}
-
-	closeOnlineForm() {
-		const {onlineHandlerForm} = this.state
-		this.setState({onlineHandlerForm: false})
-	}
-
-	openModal() {
-		const {isModalOpen} = this.state
-		this.setState({isModalOpen: true});
-	}
 
 	closeModal() {
-		const {isModalOpen} = this.state
-		this.setState({isModalOpen: false});
+		const {modal} = this.state
+		this.setState({modal: null});
 	}
 
-	one() {
-		const {gameSettings} = this.state
-		this.setState({gameSettings: "one"})
-	}
 
-	three() {
-		const {gameSettings} = this.state
-		this.setState({gameSettings: "three"})
-	}
-
-	magic() {
-		const {gameSettings} = this.state
-		this.setState({gameSettings: "magic"})
-	}
-
-	select(clicked) {
-		const {gameSettings} = this.state
-		this.setState({gameSettings: clicked})
-	}
 
 	submitOnlineGameForm(e) {
 		// const name = 'enter name from client'
 		e.preventDefault()
-		console.log(e.target[0].value, 'e.target[0]')
-		console.log(e.target[1].value, 'e.target[1]')
 		if(e.target[0].value && !e.target[1].value) {
-			console.log("*()*()", this.state.onlineHandlerMessageObj)
 			socket.emit('createGameOnline', {name: e.target[0].value})
 		}
 		if(e.target[1].value && e.target[0].value) {
-			console.log("gameid only")
 			this.setState({roomID: e.target[1].value})
 			socket.emit('joinExistingGame', {name: e.target[0].value, room: e.target[1].value})
 		}
 	}
 
 
-
-
-	newGame = this.newGame.bind(this);
-	openModal = this.openModal.bind(this);
-	closeModal = this.closeModal.bind(this);
-	one = this.one.bind(this);
-	three = this.three.bind(this);
-	magic = this.magic.bind(this);
-	select = this.select.bind(this);
-	newOnlineGame = this.newOnlineGame.bind(this);
-	closeOnlineForm = this.closeOnlineForm.bind(this);
-	submitOnlineGameForm = this.submitOnlineGameForm.bind(this);
-
   render() {
-  	const {hasGameStarted, isModalOpen, gameSettings, onlineHandlerForm, onlineHandlerMessageObj} = this.state
-  	console.log("hasGameStarted: " + hasGameStarted)
 
-  	let onlineHandlerMessage
+  	const {hasGameStarted, modal, gameSettings, onlineRoomCreateDirections} = this.state
 
-  	if(onlineHandlerMessageObj.num == 0) {
-  		onlineHandlerMessage = 
-	  	<form method="post" onSubmit={this.submitOnlineGameForm}>
+
+
+  	let directionsBody
+  	if(onlineRoomCreateDirections == 'createGame') {
+  		directionsBody = 
+	  	<form method="post" onSubmit={this.submitOnlineGameForm.bind(this)}>
 			<div className="form-group">
 				<p>Start a new game</p>
 				<input type="text" name="playername" placeholder="name"></input>
@@ -152,41 +105,26 @@ class App extends Component {
 				<button type="submit">Submit</button>
 			</div>
 		</form>
-		console.log(onlineHandlerMessage)
   	}
-
-  	if(onlineHandlerMessageObj.num == 1) {
-  		onlineHandlerMessage = 
+  	else if(onlineRoomCreateDirections === 'joinGame') {
+  		directionsBody = 
   		<p>Please ask your friend to enter Game ID: 
 		    {this.state.roomID}. Waiting for player 2...'</p>
-		  console.log(onlineHandlerMessage)
   	}
   	
 
     return (
       	<div>
-      		<Nav startNewGame={this.newGame} 
-      			newGameHasStarted={hasGameStarted}
-      			newOnlineGame = {this.newOnlineGame} 
-      			rules={this.openModal}
-      			online={this.openOnlineHandler}
-      			gameSettings={gameSettings}
-      			setToOne={this.one}
-      			setToThree={this.three}
-      			setToMagic={this.magic}
-      			setToSelected={this.select}
-      			openOnlineForm={this.newOnlineGame}>
+      		<Nav
+      			selectMenuOption={this.selectMenuOption.bind(this)}
+      			gameSettings={gameSettings}>
       		</Nav>
-      		<Modal isOpen={isModalOpen}>
-      			<h1>Rules</h1>
-      			<p>here are the rules</p>
-      			<button onClick={this.closeModal}>x</button>
+      		<Modal 
+      			show={modal} 
+      			handleClose={this.closeModal.bind(this)} 
+      			headerText={modal === "rules" ? "Rules" : "Online Form"}>
+      			{modal === "rules" ? <p>these are the rules</p> : directionsBody }
       		</Modal>
-      		<OnlineGameHandler isOpen={onlineHandlerForm}>
-      			<button onClick={this.closeOnlineForm}>x</button>
-      			{onlineHandlerMessage}
-      		</OnlineGameHandler>
-      		<h1>Ultimate Tic Tac Toe</h1>
         	<Game 
         		newGameHasStarted={hasGameStarted}
         		gameSettings={gameSettings}

@@ -28,19 +28,10 @@ class Game extends Component {
     waitingForOnlineOpponent: null
 	};
 
-  componentDidMount() {
-    socket.on('turnPlayed', data => {
-      console.log("turnPlayed")
-      this.handleOnlineOpponentsMove(data.tile)
-      this.setState({waitingForOnlineOpponent: false})
-    })
-  }
-
   isBoardBlank() {
-    const {boardpositions} = this.state
-    for(var i=0; i < 9; i++) {
-      for(var j=0; j < 9; j++) {
-        if(boardpositions[i][j] !== " ") {
+    for(let i=0; i < 9; i++) {
+      for(let j=0; j < 9; j++) {
+        if(this.state.boardpositions[i][j] !== " ") {
           return false;
         }
       }
@@ -93,8 +84,6 @@ class Game extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('CWRP')
-    console.log('nextProps', nextProps)
     const {newGameHasStarted} = nextProps
     if(newGameHasStarted && this.isBoardBlank() && this.props.newGameHasStarted != nextProps.newGameHasStarted) {
       this.setState({turn: true, allBoards: true})
@@ -109,14 +98,8 @@ class Game extends Component {
       }
     }
     if(this.props.turnPlayedData != nextProps.turnPlayedData) {
-      console.log('this.props.turnPlayedData', this.props.turnPlayedData)
-      console.log('nextProps.turnPlayedData', nextProps.turnPlayedData)
 
       const move = nextProps.turnPlayedData.tile
-      console.log('move', move)
-      console.log(this.state.boardpositions[move[0]][move[1]])
-      console.log(this.state.turn ? 'X' : 'O')
-      console.log(this.state.boardpositions[move[0]][move[1]] != this.state.turn ? 'X' : 'O')
       if(this.state.boardpositions[move[0]][move[1]] != (this.state.turn ? 'X' : 'O')) {
         this.handleOnlineOpponentsMove(nextProps.turnPlayedData.tile)
       }
@@ -127,16 +110,27 @@ class Game extends Component {
 
 	handleMove(squareClicked) { //squareClicked is whatever is fed to position attribute in <Square/>
     console.log("squareClicked")
-
     if(this.props.roomID == null) this.handleLocalMove(squareClicked)
     if(this.props.roomID && !this.state.waitingForOnlineOpponent) this.handleOnlineMove(squareClicked)
-
   };
+
+
+
+
+
+
+
+
+
+
+
+  //******************************************************************************************************
 
   handleLocalMove(squareClicked) { //squareClicked is whatever is fed to position attribute in <Square/>
     const {turn, boardpositions, availableBoard, allBoards} = this.state //these variables are undefined until this line, figure out why i put this line in this method and never in the constructor
     boardpositions[squareClicked[0]][squareClicked[1]] = turn ? 'X' : 'O'; //this line causes <Square/>'s content attribute to change immediately
-    this.setState({turn: !turn, boardpositions}, this.didWin(squareClicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
+    const currentBoard = boardpositions[squareClicked[0]]
+    this.setState({turn: !turn, boardpositions}, this.didWin(currentBoard, squareClicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
     
     //magic box check
     var aB = false
@@ -155,12 +149,10 @@ class Game extends Component {
 
   handleOnlineMove(squareClicked) {
     console.log("CURRENT PLAYERS MOVE")
-
     const {turn, boardpositions, availableBoard, allBoards} = this.state //these variables are undefined until this line, figure out why i put this line in this method and never in the constructor
     boardpositions[squareClicked[0]][squareClicked[1]] = turn ? 'X' : 'O'; //this line causes <Square/>'s content attribute to change immediately
-    console.log(turn ? 'X' : 'O')
-    console.log(this.state.boardpositions)
-    this.setState({boardpositions}, this.didWin(squareClicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
+    const currentBoard = boardpositions[squareClicked[0]]
+    this.setState({boardpositions}, this.didWin(currentBoard, squareClicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
 
     //magic box check
     let aB = false
@@ -172,9 +164,7 @@ class Game extends Component {
         aB = true
       }
     }
-
     this.setState({availableBoard: squareClicked[1], allBoards: aB})
-
     this.setState({waitingForOnlineOpponent: true})
     socket.emit('playTurn', { tile: squareClicked, room: this.props.roomID })
 
@@ -185,7 +175,8 @@ class Game extends Component {
     console.log("OPPO MOVE")
     const {turn, boardpositions, availableBoard, allBoards} = this.state //these variables are undefined until this line, figure out why i put this line in this method and never in the constructor
     boardpositions[squareClicked[0]][squareClicked[1]] = turn ? 'O' : 'X'; //this line causes <Square/>'s content attribute to change immediately
-    this.setState({boardpositions}, this.didWin(squareClicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
+    const currentBoard = boardpositions[squareClicked[0]]
+    this.setState({boardpositions}, this.didWin(currentBoard, squareClicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
     
     //magic box check
     let aB = false
@@ -202,89 +193,82 @@ class Game extends Component {
   }
 
 
+  //***********************************************************************************************************************
 
-  didWin(squareClicked) {
+
+
+
+
+
+
+
+  //***********************************************************************************************************************
+
+
+  didWinBoard(board) {
+    const winConditions = [ 
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6],
+    ];
+    for(var i=0; i<8; i++) {
+      if(board[winConditions[i][0]] === board[winConditions[i][1]] && 
+        board[winConditions[i][1]] === board[winConditions[i][2]] && 
+        board[winConditions[i][1]] !== " ") {
+        return true
+      }
+    }
+    return false
+  }
+
+  didWin(board, squareClicked) {
     const {turn, boardpositions, outerboard, playerJustWonInnerBox} = this.state;
     const {gameSettings} = this.props
-    const winConditions = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
+    if(this.didWinBoard(board)) {
+      console.log("won an inner box");
+      if(outerboard[squareClicked[0]] === ' ') {
+        this.setState({playerJustWonInnerBox: true})
+      }
+      else {
+        this.setState({playerJustWonInnerBox: false})
+      }
 
-    //check for win in current box
-    for(var i=0; i<8; i++) {
-      if(boardpositions[squareClicked[0]][winConditions[i][0]] 
-        === boardpositions[squareClicked[0]][winConditions[i][1]] 
-        && boardpositions[squareClicked[0]][winConditions[i][1]] 
-        === boardpositions[squareClicked[0]][winConditions[i][2]] 
-        && boardpositions[squareClicked[0]][winConditions[i][1]] 
-        !== " ") {
-          console.log("won an inner box");
-          if(outerboard[squareClicked[0]] === ' ') {
-            this.setState({playerJustWonInnerBox: true})
-          }
-          else {
-            this.setState({playerJustWonInnerBox: false})
-          }
-          if(outerboard[squareClicked[0]] === " ") {
-            outerboard[squareClicked[0]] = !this.props.roomID ? (turn ? 'X' : 'O') : (!this.state.waitingForOnlineOpponent ? (turn ? 'X' : 'O') : (turn ? 'O' : 'X'));
-          }
-          this.setState(outerboard)
-          if(gameSettings === "three") {
-            this.didWinOuter(squareClicked[0])
-          }
-          if(gameSettings === "one") {
-            this.wonGame();
-          }
-          break;
-        }
-      this.setState({playerJustWonInnerBox: false})
+      //online logic involved
+      if(outerboard[squareClicked[0]] === " ") {
+        //click square
+        outerboard[squareClicked[0]] = !this.props.roomID ? (turn ? 'X' : 'O') : (!this.state.waitingForOnlineOpponent ? (turn ? 'X' : 'O') : (turn ? 'O' : 'X'));
+      }
+
+      if(gameSettings === "one") {
+        this.wonGame();
+      }
+      else this.didWinGame();
+
     }
-
-    //this.setState({playerJustWonInnerBox: false})
+    else this.setState({playerJustWonInnerBox: false})
 
   }
 
   //check for win on outer board only when an inner box is won
-  didWinOuter(outersquareClicked) {
-    const {outerboard, playerJustWonGame, availableBoard, allBoards} = this.state
-    const winconditions = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-    for(var i=0; i<8; i++) {
-      if(outerboard[winconditions[i][0]] === outerboard[winconditions[i][1]] &&
-        outerboard[winconditions[i][1]] === outerboard[winconditions[i][2]] &&
-        outerboard[winconditions[i][0]] !== " ") {
-          this.wonGame();
-          console.log("won an outerbox/the game")
-          break;
-        }
-    }
+  didWinGame() {
+    if(this.didWinBoard(this.state.outerboard)) {
+        this.wonGame();
+      }
   }
+  
 
   wonGame() {
     const {availableBoard, allBoards, playerJustWonGame} = this.state
     this.setState({availableBoard: 9, allBoards: false, playerJustWonGame: true})
   }
 
+  //***********************************************************************************************************************
+
+
+
+
+
   isBoardBlank = this.isBoardBlank.bind(this);
   handleMove = this.handleMove.bind(this);
   didWin = this.didWin.bind(this);
-  //didWinInner = this.didWinInner.bind(this);
-  didWinOuter = this.didWinOuter.bind(this);
   wonGame = this.wonGame.bind(this);
 
   handleOnlineOpponentsMove = this.handleOnlineOpponentsMove.bind(this)
@@ -294,7 +278,6 @@ class Game extends Component {
     console.log("allBoards: " + allBoards)
     return (
       <div id="Game">
-        <h2>{this.determineHeading()}</h2>
       	<TTT 
       		boardset={false}
       		boardpositions={boardpositions}
@@ -303,6 +286,7 @@ class Game extends Component {
           allBoards={allBoards}
           outerboard={outerboard}>
       	</TTT>
+        <h2>{this.determineHeading()}</h2>
       </div>
     );
   }
