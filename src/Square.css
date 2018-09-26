@@ -7,6 +7,8 @@ button {
 	font-weight: bold;
 	font-size: 32px;
 	outline: 0;
+	padding: 0;
+	display: block;
 }
 
 #center {

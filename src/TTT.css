@@ -1,22 +1,74 @@
 .bigTable, .lilTable {
 	margin: auto;
+	border-collapse: collapse;
+}
+
+.smallTable {
+	border-collapse: collapse;
+	margin: auto;
 }
 
 .innerboard {
 	border: 1px solid black;
-	border-radius: 2px;
 	height: 50px;
 	width: 50px;
 	padding: 0;
+
 }
 
 /*7A06C0 ECE62A*/
 
 .outerboard {
 	border: 3px solid black;
-	border-radius: 7px;
 	height: 160px;
 	width: 160px;
+	position: relative;
+}
+
+.outerboard:hover {
+
+}
+
+.outerboardWon {
+	position: absolute;
+	height: 162px;
+	width: 162px;
+	line-height: 162px;
+	font-size: 140px;
+	z-index: -1;
+	text-align: center;
+	opacity: .2;
+	top: 0;
+	left: 0;
+}
+
+.winMark {
+	position: absolute;
+	height: 162px;
+	width: 162px;
+	line-height: 162px;
+	font-size: 150px;
+	z-index: -2;
+	text-align: center;
+	opacity: .3;
+	top: 0;
+	left: 0;
+}
+
+.svgclass {
+	height: 100%;
+	width: 100%;
+}
+
+.linecross {
+	stroke: rgb(255,0,0);
+	stroke-width: 2;
+	stroke-linecap: round;
+	/*
+	stroke-dasharray: 152;
+	stroke-dashoffset: 152;
+	animation: offset 1s linear forwards;
+	*/
 }
 
 /*
@@ -43,7 +95,7 @@ positioning
 */
 
 .bold {
-	box-shadow: 0 0 30px #6A6A6A;
+	background: lightgrey;
 }
 
 .xcolor {

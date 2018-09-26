@@ -21,6 +21,7 @@ class Game extends Component {
       [ " ", " ", " ", " ", " ", " ", " ", " ", " " ]
     ],
     outerboard: [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+    markedWins: [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
     availableBoard: 9,
     allBoards: false,
     playerJustWonInnerBox: false,
@@ -46,27 +47,27 @@ class Game extends Component {
       let innerboxwinner = " "
 
       if(playerJustWonInnerBox) {
-        innerboxwinner = (!turn ? "X" : "O") + " Player wins a board. "
+        innerboxwinner = (!(turn === '✕' && turn !== null) ? '✕' : '◯') + " Player wins a board. "
         console.log(innerboxwinner)
       }
 
       if(playerJustWonGame) {
-        return (!turn ? "X" : "O") + " wins the game!"
+        return (!(turn === '✕' && turn !== null) ? '✕' : '◯') + " wins the game!"
       }
 
-      if(turn === null) {
+      if((turn === '✕' && turn !== null) === null) {
         return "";
       }
-      else if(turn) {
-        return innerboxwinner + "X Player's turn"
+      else if((turn === '✕' && turn !== null)) {
+        return innerboxwinner + "✕ Player's turn"
       }
-      else return innerboxwinner + "O Player's turn"
+      else return innerboxwinner + "◯ Player's turn"
     }
     else {
       console.log("DETERMINEHEADING")
       let innerboxwinner = " "
       if(playerJustWonInnerBox) {
-        innerboxwinner = (turn ? "You win" : "Your opponent wins") + " a board. "
+        innerboxwinner = ((turn === '✕' && turn !== null) ? "You win" : "Your opponent wins") + " a board. "
       }
       if(playerJustWonGame) {
         return (this.state.waitingForOnlineOpponent ? "You win" : "Your opponent wins") + "  the game!"
@@ -86,7 +87,7 @@ class Game extends Component {
   componentWillReceiveProps(nextProps) {
     const {newGameHasStarted} = nextProps
     if(newGameHasStarted && this.isBoardBlank() && this.props.newGameHasStarted != nextProps.newGameHasStarted) {
-      this.setState({turn: true, allBoards: true})
+      this.setState({turn: '✕', allBoards: true})
     }
     if(nextProps.player == 1 || nextProps.player == 2) {
       console.log("PLAYER NUMBER SELECTED") 
@@ -94,13 +95,13 @@ class Game extends Component {
         this.setState({waitingForOnlineOpponent: false, room: this.props.roomID})
       }
       if(nextProps.player == 2 && nextProps.player != this.props.player) {
-        this.setState({waitingForOnlineOpponent: true, room: this.props.roomID, turn: false}) 
+        this.setState({waitingForOnlineOpponent: true, room: this.props.roomID, turn: '◯'}) 
       }
     }
     if(this.props.turnPlayedData != nextProps.turnPlayedData) {
 
       const move = nextProps.turnPlayedData.tile
-      if(this.state.boardpositions[move[0]][move[1]] != (this.state.turn ? 'X' : 'O')) {
+      if(this.state.boardpositions[move[0]][move[1]] != ((this.state.turn === '✕' && this.state.turn !== null) ? '✕' : '◯')) {
         this.handleOnlineOpponentsMove(nextProps.turnPlayedData.tile)
       }
       //this.setState({waitingForOnlineOpponent: false})
@@ -128,9 +129,9 @@ class Game extends Component {
 
   handleLocalMove(squareClicked) { //squareClicked is whatever is fed to position attribute in <Square/>
     const {turn, boardpositions, availableBoard, allBoards} = this.state //these variables are undefined until this line, figure out why i put this line in this method and never in the constructor
-    boardpositions[squareClicked[0]][squareClicked[1]] = turn ? 'X' : 'O'; //this line causes <Square/>'s content attribute to change immediately
+    boardpositions[squareClicked[0]][squareClicked[1]] = ((turn === '✕' && turn !== null) ? '✕' : '◯'); //this line causes <Square/>'s content attribute to change immediately
     const currentBoard = boardpositions[squareClicked[0]]
-    this.setState({turn: !turn, boardpositions}, this.didWin(currentBoard, squareClicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
+    this.setState({turn: ((turn === '✕' && turn !== null) ? '◯' : '✕'), boardpositions}, this.didWin(currentBoard, squareClicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
     
     //magic box check
     var aB = false
@@ -150,7 +151,7 @@ class Game extends Component {
   handleOnlineMove(squareClicked) {
     console.log("CURRENT PLAYERS MOVE")
     const {turn, boardpositions, availableBoard, allBoards} = this.state //these variables are undefined until this line, figure out why i put this line in this method and never in the constructor
-    boardpositions[squareClicked[0]][squareClicked[1]] = turn ? 'X' : 'O'; //this line causes <Square/>'s content attribute to change immediately
+    boardpositions[squareClicked[0]][squareClicked[1]] = ((turn === '✕' && turn !== null) ? '✕' : '◯'); //this line causes <Square/>'s content attribute to change immediately
     const currentBoard = boardpositions[squareClicked[0]]
     this.setState({boardpositions}, this.didWin(currentBoard, squareClicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
 
@@ -174,7 +175,7 @@ class Game extends Component {
   handleOnlineOpponentsMove(squareClicked) {
     console.log("OPPO MOVE")
     const {turn, boardpositions, availableBoard, allBoards} = this.state //these variables are undefined until this line, figure out why i put this line in this method and never in the constructor
-    boardpositions[squareClicked[0]][squareClicked[1]] = turn ? 'O' : 'X'; //this line causes <Square/>'s content attribute to change immediately
+    boardpositions[squareClicked[0]][squareClicked[1]] = ((turn === '✕' && turn !== null) ? '◯' : '✕'); //this line causes <Square/>'s content attribute to change immediately
     const currentBoard = boardpositions[squareClicked[0]]
     this.setState({boardpositions}, this.didWin(currentBoard, squareClicked)); //these variables don't get updated until after this function is complete(they will be changed once this.state at the beginning of this function is called again), boardpositions same as "boardpostions: boardposition"
     
@@ -209,20 +210,32 @@ class Game extends Component {
     const winConditions = [ 
       [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6],
     ];
-    for(var i=0; i<8; i++) {
+    for(let i=0; i<8; i++) {
       if(board[winConditions[i][0]] === board[winConditions[i][1]] && 
         board[winConditions[i][1]] === board[winConditions[i][2]] && 
         board[winConditions[i][1]] !== " ") {
-        return true
+        return winConditions[i]
       }
     }
     return false
   }
 
+  markWin(boardNum, winCondition) {
+    let updatedWins = this.state.markedWins
+    let id = ""
+    for(let i = 0; i < 3; i++) {
+      id += winCondition[i]
+    }
+    updatedWins[boardNum] = id
+    this.setState({markedWins: updatedWins})
+  }
+
   didWin(board, squareClicked) {
     const {turn, boardpositions, outerboard, playerJustWonInnerBox} = this.state;
     const {gameSettings} = this.props
-    if(this.didWinBoard(board)) {
+    const mark = this.didWinBoard(board)
+    if(mark) {
+      this.markWin(squareClicked[0], mark)
       console.log("won an inner box");
       if(outerboard[squareClicked[0]] === ' ') {
         this.setState({playerJustWonInnerBox: true})
@@ -234,7 +247,7 @@ class Game extends Component {
       //online logic involved
       if(outerboard[squareClicked[0]] === " ") {
         //click square
-        outerboard[squareClicked[0]] = !this.props.roomID ? (turn ? 'X' : 'O') : (!this.state.waitingForOnlineOpponent ? (turn ? 'X' : 'O') : (turn ? 'O' : 'X'));
+        outerboard[squareClicked[0]] = !this.props.roomID ? ((turn === '✕' && turn !== null) ? '✕' : '◯') : (!this.state.waitingForOnlineOpponent ? ((turn === '✕' && turn !== null) ? '✕' : '◯') : ((turn === '✕' && turn !== null) ? '◯' : '✕'));
       }
 
       if(gameSettings === "one") {
@@ -260,6 +273,30 @@ class Game extends Component {
     this.setState({availableBoard: 9, allBoards: false, playerJustWonGame: true})
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    if(nextState.turn === '✕') {
+      document.getElementById("xturnbox").style.height = "100px"
+      document.getElementById("xturnbox").style.width = "100px"
+      document.getElementById("xturnbox").style.lineHeight = "100px"
+      document.getElementById("xturnbox").style.fontSize = "90px"
+      document.getElementById("oturnbox").style.height = "40px"
+      document.getElementById("oturnbox").style.width = "40px"
+      document.getElementById("oturnbox").style.lineHeight = "40px"
+      document.getElementById("oturnbox").style.fontSize = "30px"
+    }
+    if(nextState.turn === '◯') {
+      document.getElementById("oturnbox").style.height = "100px"
+      document.getElementById("oturnbox").style.width = "100px"
+      document.getElementById("oturnbox").style.lineHeight = "100px"
+      document.getElementById("oturnbox").style.fontSize = "90px"
+      document.getElementById("xturnbox").style.height = "40px"
+      document.getElementById("xturnbox").style.width = "40px"
+      document.getElementById("xturnbox").style.lineHeight = "40px"
+      document.getElementById("xturnbox").style.fontSize = "30px"
+
+    }
+  }
+
   //***********************************************************************************************************************
 
 
@@ -278,13 +315,18 @@ class Game extends Component {
     console.log("allBoards: " + allBoards)
     return (
       <div id="Game">
+        <div className={"counterContainer"}>
+          <div id={"xturnbox"} className={"turnCounterLeft"}>✕</div>
+          <div id={"oturnbox"} className={"turnCounterRight"}>◯</div>
+        </div>
       	<TTT 
       		boardset={false}
       		boardpositions={boardpositions}
       		myFunc={this.handleMove}
           availableBoard={availableBoard}
           allBoards={allBoards}
-          outerboard={outerboard}>
+          outerboard={outerboard}
+          winIDs={this.state.markedWins}>
       	</TTT>
         <h2>{this.determineHeading()}</h2>
       </div>
