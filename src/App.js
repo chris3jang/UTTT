@@ -22,7 +22,9 @@ class App extends React.Component {
 		onlineRoomCreateDirections: 'createGame',
 		roomID: null,
 		player: null,
-		turnPlayedData: null
+		turnPlayedData: null,
+
+		exitGame: null
 	}
 
 	componentDidMount() {
@@ -59,6 +61,7 @@ class App extends React.Component {
 		if(action === 'one' || action === 'three' || action === 'magic') this.setState({gameSettings: action})
 		if(action === 'local') this.setState({hasGameStarted: true});
 		if(action === 'online') this.setState({modal: "online", roomID: true});
+		if(action === 'exit') this.setState({hasGameStarted: false, exitGame: true})
 		if(action === 'rules') this.setState({modal: "rules"})
 	}
 
@@ -131,7 +134,8 @@ class App extends React.Component {
         		online={this.state.online}
         		player={this.state.player}
         		roomID={this.state.roomID}
-        		turnPlayedData={this.state.turnPlayedData}>
+        		turnPlayedData={this.state.turnPlayedData}
+        		exitGame = {this.state.exitGame}>
         	</Game>
       	</div>
     );

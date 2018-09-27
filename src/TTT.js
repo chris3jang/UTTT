@@ -5,7 +5,7 @@ import Square from './Square.js';
 class TTT extends Component {
 
   render() {
-    const {myFunc, boardpositions, boardset, boardnumber, availableBoard, allBoards, outerboard, winIDs} = this.props
+    const {myFunc, myFuncTwo, boardpositions, boardset, boardnumber, availableBoard, allBoards, outerboard, winIDs} = this.props
     var boardcontent;
     var color;
 
@@ -39,6 +39,7 @@ class TTT extends Component {
                                <Square
                                  position={[boardnumber, 3*i+j]} 
                                  myFunc={myFunc} 
+                                 myFuncTwo={myFuncTwo}
                                  content={boardpositions[boardnumber][3*i+j]}
                                  availableBoard={availableBoard}
                                  allBoards={allBoards}>
@@ -53,7 +54,7 @@ class TTT extends Component {
                          <tbody>
                          {[0, 1, 2].map((item, i) =>
                            <tr>{[0, 1, 2].map((item, j) =>
-                             <td className={"outerboard"+ ((availableBoard === 3*i+j || allBoards) ? " bold" : "")}>
+                             <td className={"outerboard"+ ((this.props.nextBoard == 3*i+j) ? " nextBoard" : ((availableBoard === 3*i+j || allBoards) ? " bold" : ""))}>
                                <div className={"outerboardWon"}>
                                 {(outerboard[3*i+j])}
                                </div>
@@ -73,6 +74,7 @@ class TTT extends Component {
                                  boardset={true}
                                  boardpositions={boardpositions}
                                  myFunc={myFunc}
+                                 myFuncTwo={myFuncTwo}
                                  boardnumber={3*i+j}
                                  availableBoard={availableBoard}
                                  allBoards={allBoards}>
@@ -85,7 +87,7 @@ class TTT extends Component {
     }
 
     return (
-      <div>
+      <div className="game">
         {boardcontent}
       </div>
     );

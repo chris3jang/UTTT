@@ -1,6 +1,16 @@
+.game {
+	position: relative;
+	margin-top: 10px;
+}
+
 .counterContainer {
+	position: absolute;
 	height: 100px;
 	width: 100%;
+	/*
+	display: inline-block;
+	vertical-align: top;
+	*/
 }
 
 .turnCounterLeft {

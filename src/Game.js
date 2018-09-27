@@ -26,7 +26,8 @@ class Game extends Component {
     allBoards: false,
     playerJustWonInnerBox: false,
     playerJustWonGame: false,
-    waitingForOnlineOpponent: null
+    waitingForOnlineOpponent: null,
+    nextBoardOnHover: null
 	};
 
   isBoardBlank() {
@@ -105,6 +106,26 @@ class Game extends Component {
         this.handleOnlineOpponentsMove(nextProps.turnPlayedData.tile)
       }
       //this.setState({waitingForOnlineOpponent: false})
+    }
+    if(!newGameHasStarted) {
+      this.setState({boardpositions: [
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ]
+      ], 
+      outerboard: [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+      markedWins: [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+      availableBoard: 9,
+      allBoards: false,
+      nextBoardOnHover: null,
+      turn: null
+      })
     }
   }
 
@@ -293,8 +314,23 @@ class Game extends Component {
       document.getElementById("xturnbox").style.width = "40px"
       document.getElementById("xturnbox").style.lineHeight = "40px"
       document.getElementById("xturnbox").style.fontSize = "30px"
-
     }
+    if(nextState.turn === null) {
+      document.getElementById("xturnbox").style.height = "40px"
+      document.getElementById("xturnbox").style.width = "40px"
+      document.getElementById("xturnbox").style.lineHeight = "40px"
+      document.getElementById("xturnbox").style.fontSize = "30px"
+      document.getElementById("oturnbox").style.height = "40px"
+      document.getElementById("oturnbox").style.width = "40px"
+      document.getElementById("oturnbox").style.lineHeight = "40px"
+      document.getElementById("oturnbox").style.fontSize = "30px"
+    }
+  }
+
+  handleHover(squareHovered) {
+    console.log("hovered")
+    console.log(squareHovered)
+    this.setState({nextBoardOnHover: squareHovered})
   }
 
   //***********************************************************************************************************************
@@ -314,7 +350,7 @@ class Game extends Component {
   	const {boardpositions, availableBoard, allBoards, outerboard, turn} = this.state
     console.log("allBoards: " + allBoards)
     return (
-      <div id="Game">
+      <div className="game">
         <div className={"counterContainer"}>
           <div id={"xturnbox"} className={"turnCounterLeft"}>✕</div>
           <div id={"oturnbox"} className={"turnCounterRight"}>◯</div>
@@ -323,10 +359,12 @@ class Game extends Component {
       		boardset={false}
       		boardpositions={boardpositions}
       		myFunc={this.handleMove}
+          myFuncTwo={this.handleHover.bind(this)}
           availableBoard={availableBoard}
           allBoards={allBoards}
           outerboard={outerboard}
-          winIDs={this.state.markedWins}>
+          winIDs={this.state.markedWins}
+          nextBoard={this.state.nextBoardOnHover}>
       	</TTT>
         <h2>{this.determineHeading()}</h2>
       </div>

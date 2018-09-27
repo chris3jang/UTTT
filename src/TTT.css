@@ -1,3 +1,7 @@
+.game {
+	
+}
+
 .bigTable, .lilTable {
 	margin: auto;
 	border-collapse: collapse;
@@ -26,7 +30,11 @@
 }
 
 .outerboard:hover {
+	background: white;
+}
 
+.nextBoard {
+	background: #edeeef;
 }
 
 .outerboardWon {
@@ -95,7 +103,7 @@ positioning
 */
 
 .bold {
-	background: lightgrey;
+	background: #edeeef;
 }
 
 .xcolor {
