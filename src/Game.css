@@ -1,6 +1,5 @@
 .game {
 	position: relative;
-	margin-top: 10px;
 }
 
 .counterContainer {
@@ -69,4 +68,9 @@
 	border-radius: 3px;
 	display: inline-block;
 	text-align: center;
+}
+
+.onlineOpponent {
+	border-color: grey;
+	color: grey;
 }

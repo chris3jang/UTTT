@@ -54,7 +54,7 @@ class TTT extends Component {
                          <tbody>
                          {[0, 1, 2].map((item, i) =>
                            <tr>{[0, 1, 2].map((item, j) =>
-                             <td className={"outerboard"+ ((this.props.nextBoard == 3*i+j) ? " nextBoard" : ((availableBoard === 3*i+j || allBoards) ? " bold" : ""))}>
+                             <td className={"outerboard" + (this.props.newGameHasStarted ? " outerboardHover" : "") + ((this.props.nextBoard == 3*i+j) ? " nextBoard" : ((availableBoard === 3*i+j || allBoards) ? " bold" : ""))}>
                                <div className={"outerboardWon"}>
                                 {(outerboard[3*i+j])}
                                </div>

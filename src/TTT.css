@@ -1,5 +1,5 @@
 .game {
-	
+
 }
 
 .bigTable, .lilTable {
@@ -29,12 +29,12 @@
 	position: relative;
 }
 
-.outerboard:hover {
-	background: white;
+.outerboardHover:hover {
+	background: red;
 }
 
 .nextBoard {
-	background: #edeeef;
+	background: #e6e6e6;
 }
 
 .outerboardWon {
@@ -103,7 +103,7 @@ positioning
 */
 
 .bold {
-	background: #edeeef;
+	background: #e6e6e6;
 }
 
 .xcolor {

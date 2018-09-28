@@ -41,50 +41,6 @@ class Game extends Component {
     return true;
   }
 
-  determineHeading() {
-    const {turn, playerJustWonInnerBox, playerJustWonGame} = this.state
-
-    if(!this.props.roomID) {
-      let innerboxwinner = " "
-
-      if(playerJustWonInnerBox) {
-        innerboxwinner = (!(turn === '✕' && turn !== null) ? '✕' : '◯') + " Player wins a board. "
-        console.log(innerboxwinner)
-      }
-
-      if(playerJustWonGame) {
-        return (!(turn === '✕' && turn !== null) ? '✕' : '◯') + " wins the game!"
-      }
-
-      if((turn === '✕' && turn !== null) === null) {
-        return "";
-      }
-      else if((turn === '✕' && turn !== null)) {
-        return innerboxwinner + "✕ Player's turn"
-      }
-      else return innerboxwinner + "◯ Player's turn"
-    }
-    else {
-      console.log("DETERMINEHEADING")
-      let innerboxwinner = " "
-      if(playerJustWonInnerBox) {
-        innerboxwinner = ((turn === '✕' && turn !== null) ? "You win" : "Your opponent wins") + " a board. "
-      }
-      if(playerJustWonGame) {
-        return (this.state.waitingForOnlineOpponent ? "You win" : "Your opponent wins") + "  the game!"
-      }
-
-      if(!this.props.newGameHasStarted) {
-        return "";
-      }
-      else if(!this.state.waitingForOnlineOpponent) {
-        return innerboxwinner + "Your turn"
-      }
-      else return innerboxwinner + "Your opponent's turn"
-    }
-    
-  }
-
   componentWillReceiveProps(nextProps) {
     const {newGameHasStarted} = nextProps
     if(newGameHasStarted && this.isBoardBlank() && this.props.newGameHasStarted != nextProps.newGameHasStarted) {
@@ -96,7 +52,7 @@ class Game extends Component {
         this.setState({waitingForOnlineOpponent: false, room: this.props.roomID})
       }
       if(nextProps.player == 2 && nextProps.player != this.props.player) {
-        this.setState({waitingForOnlineOpponent: true, room: this.props.roomID, turn: '◯'}) 
+        this.setState({waitingForOnlineOpponent: true, room: this.props.roomID}) 
       }
     }
     if(this.props.turnPlayedData != nextProps.turnPlayedData) {
@@ -187,6 +143,7 @@ class Game extends Component {
       }
     }
     this.setState({availableBoard: squareClicked[1], allBoards: aB})
+    this.setState({turn: ((turn === '✕' && turn !== null) ? '✕' : '◯')})
     this.setState({waitingForOnlineOpponent: true})
     socket.emit('playTurn', { tile: squareClicked, room: this.props.roomID })
 
@@ -294,38 +251,7 @@ class Game extends Component {
     this.setState({availableBoard: 9, allBoards: false, playerJustWonGame: true})
   }
 
-  componentWillUpdate(nextProps, nextState) {
-    if(nextState.turn === '✕') {
-      document.getElementById("xturnbox").style.height = "100px"
-      document.getElementById("xturnbox").style.width = "100px"
-      document.getElementById("xturnbox").style.lineHeight = "100px"
-      document.getElementById("xturnbox").style.fontSize = "90px"
-      document.getElementById("oturnbox").style.height = "40px"
-      document.getElementById("oturnbox").style.width = "40px"
-      document.getElementById("oturnbox").style.lineHeight = "40px"
-      document.getElementById("oturnbox").style.fontSize = "30px"
-    }
-    if(nextState.turn === '◯') {
-      document.getElementById("oturnbox").style.height = "100px"
-      document.getElementById("oturnbox").style.width = "100px"
-      document.getElementById("oturnbox").style.lineHeight = "100px"
-      document.getElementById("oturnbox").style.fontSize = "90px"
-      document.getElementById("xturnbox").style.height = "40px"
-      document.getElementById("xturnbox").style.width = "40px"
-      document.getElementById("xturnbox").style.lineHeight = "40px"
-      document.getElementById("xturnbox").style.fontSize = "30px"
-    }
-    if(nextState.turn === null) {
-      document.getElementById("xturnbox").style.height = "40px"
-      document.getElementById("xturnbox").style.width = "40px"
-      document.getElementById("xturnbox").style.lineHeight = "40px"
-      document.getElementById("xturnbox").style.fontSize = "30px"
-      document.getElementById("oturnbox").style.height = "40px"
-      document.getElementById("oturnbox").style.width = "40px"
-      document.getElementById("oturnbox").style.lineHeight = "40px"
-      document.getElementById("oturnbox").style.fontSize = "30px"
-    }
-  }
+  
 
   handleHover(squareHovered) {
     console.log("hovered")
@@ -352,8 +278,8 @@ class Game extends Component {
     return (
       <div className="game">
         <div className={"counterContainer"}>
-          <div id={"xturnbox"} className={"turnCounterLeft"}>✕</div>
-          <div id={"oturnbox"} className={"turnCounterRight"}>◯</div>
+          <div id={"xturnbox"} className={(this.state.turn === '✕' ? "currentTurnLeft" : "turnCounterLeft") + ((this.props.roomID && this.state.turn) === '✕' ? " onlineOpponent" : "")}>✕</div>
+          <div id={"oturnbox"} className={(this.state.turn === '◯' ? "currentTurnRight" : "turnCounterRight") + ((this.props.roomID && this.state.turn) === '◯' ? " onlineOpponent" : "")}>◯</div>
         </div>
       	<TTT 
       		boardset={false}
@@ -364,9 +290,9 @@ class Game extends Component {
           allBoards={allBoards}
           outerboard={outerboard}
           winIDs={this.state.markedWins}
-          nextBoard={this.state.nextBoardOnHover}>
+          nextBoard={this.state.nextBoardOnHover}
+          newGameHasStarted={this.props.newGameHasStarted}>
       	</TTT>
-        <h2>{this.determineHeading()}</h2>
       </div>
     );
   }

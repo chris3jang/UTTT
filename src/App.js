@@ -32,7 +32,7 @@ class App extends React.Component {
 		socket.on('newGameCreated', data => {
 			console.log("IHEARD NEW GAME WAS CREATED")
 			console.log(data, "data")
-	  		self.setState({ onlineRoomCreateDirections: 'joinRoom', roomID: data.room})
+	  		self.setState({ onlineRoomCreateDirections: 'joinGame', roomID: data.room})
 
 		});
 
@@ -122,6 +122,7 @@ class App extends React.Component {
       			selectMenuOption={this.selectMenuOption.bind(this)}
       			gameSettings={gameSettings}>
       		</Nav>
+      		<div className="separator"></div>
       		<Modal 
       			show={modal} 
       			handleClose={this.closeModal.bind(this)} 
