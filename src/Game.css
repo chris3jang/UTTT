@@ -2,10 +2,18 @@
 	position: relative;
 }
 
+.gameNotInPlay {
+	position: absolute;
+	opacity: 0;
+}
+
 .counterContainer {
 	position: absolute;
 	height: 100px;
 	width: 100%;
+	opacity: 1;
+
+	transition: opacity 2s;
 	/*
 	display: inline-block;
 	vertical-align: top;
@@ -53,6 +61,8 @@
 	border-radius: 3px;
 	display: inline-block;
 	text-align: center;
+
+	transition: width .5s, height .5s, line-height .5s, font-size .5s;
 }
 
 .currentTurnRight {
@@ -68,6 +78,8 @@
 	border-radius: 3px;
 	display: inline-block;
 	text-align: center;
+
+	transition: width .5s, height .5s, line-height .5s, font-size .5s;
 }
 
 .onlineOpponent {

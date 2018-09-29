@@ -5,9 +5,8 @@ import Square from './Square.js';
 class TTT extends Component {
 
   render() {
-    const {myFunc, myFuncTwo, boardpositions, boardset, boardnumber, availableBoard, allBoards, outerboard, winIDs} = this.props
+    const {myFunc, myFuncTwo, boardpositions, boardset, boardnumber, availableBoard, winIDs} = this.props
     var boardcontent;
-    var color;
 
     const wins = {
       "012": <line x1="10" y1="31" x2="152" y2="31" className={"linecross"} id={"012"}></line>,
@@ -42,34 +41,19 @@ class TTT extends Component {
                                  myFuncTwo={myFuncTwo}
                                  content={boardpositions[boardnumber][3*i+j]}
                                  availableBoard={availableBoard}
-                                 allBoards={allBoards}>
+                                 newGameHasStarted={this.props.newGameHasStarted}>
                                </Square>
                              </td>)
                              
     }
 
     else {
-      boardcontent = <div>
+      boardcontent = <div className="fullBoard">
                        <table className="bigTable">
                          <tbody>
                          {[0, 1, 2].map((item, i) =>
                            <tr>{[0, 1, 2].map((item, j) =>
-                             <td className={"outerboard" + (this.props.newGameHasStarted ? " outerboardHover" : "") + ((this.props.nextBoard == 3*i+j) ? " nextBoard" : ((availableBoard === 3*i+j || allBoards) ? " bold" : ""))}>
-                               <div className={"outerboardWon"}>
-                                {(outerboard[3*i+j])}
-                               </div>
-                               {winIDs[3*i+j] && 
-                                <div className={"winMark"}>
-                                  <svg className={"svgclass"}>
-                                    {wins[winIDs[3*i+j]]}
-                                  </svg>
-                                </div>
-                               }
-                               <div className={"winMark"}>
-                                 <svg className={"svgclass"}>
-                                  wins[winIDs[3*i+j]]
-                                </svg>
-                               </div>
+                             <td className={"outerboard" + (this.props.newGameHasStarted ? " outerboardHover" : "") + ((this.props.nextBoard == 3*i+j) ? " nextBoard" : ((availableBoard === 3*i+j || (availableBoard === 9 && this.props.newGameHasStarted)) ? " bold" : ""))}>
                                <TTT 
                                  boardset={true}
                                  boardpositions={boardpositions}
@@ -77,8 +61,20 @@ class TTT extends Component {
                                  myFuncTwo={myFuncTwo}
                                  boardnumber={3*i+j}
                                  availableBoard={availableBoard}
-                                 allBoards={allBoards}>
+                                 newGameHasStarted={this.props.newGameHasStarted}>
                                </TTT>
+                               {boardpositions[9][3*i+j] != ' ' &&
+                                <div className={"outerboardWon"}>
+                                  {(boardpositions[9][3*i+j])}
+                                </div>
+                               } 
+                               {winIDs[3*i+j] && 
+                                <div className={"winMark"}>
+                                  <svg className={"svgclass"}>
+                                    {wins[winIDs[3*i+j]]}
+                                  </svg>
+                                </div>
+                               }
                              </td>)}
                            </tr>)}  
                          </tbody>  

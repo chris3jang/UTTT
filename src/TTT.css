@@ -4,7 +4,24 @@
 
 .bigTable, .lilTable {
 	margin: auto;
-	border-collapse: collapse;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.bigTable tr:first-child td:first-child {
+	border-top-left-radius: 10px
+}
+
+.bigTable tr:first-child td:last-child {
+	border-top-right-radius: 10px;
+}
+
+.bigTable tr:last-child td:first-child {
+	border-bottom-left-radius: 10px;
+}
+
+.bigTable tr:last-child td:last-child {
+	border-bottom-right-radius: 10px;
 }
 
 .smallTable {
