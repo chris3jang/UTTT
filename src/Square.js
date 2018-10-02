@@ -3,39 +3,27 @@ import './Square.css';
 
 const Square = ({position, myFunc, myFuncTwo, content, availableBoard, newGameHasStarted}) => {
 
+  const isActiveBoard = (content === " " && (position[0] === availableBoard || (availableBoard === 9 && newGameHasStarted)));
+
   const handleClick = () => {
-    if(content === " " && (position[0] === availableBoard || (availableBoard === 9 && newGameHasStarted))) {
-      console.log(position);
+    console.log("content", content, 'position', position, 'availableBoard', availableBoard, 'newGameHasStarted', newGameHasStarted)
+    if(isActiveBoard) {
       myFunc(position);
     }
   };
-
   const handleMouseOver = () => {
-    if(content === " " && position[0] === availableBoard || (availableBoard === 9 && newGameHasStarted)) {
+    if(isActiveBoard) {
       myFuncTwo(position[1]);
     }
-  }
-
+  };
   const handleMouseOut = () => {
-    if(content === " " && position[0] === availableBoard || (availableBoard === 9 && newGameHasStarted)) {
+    if(isActiveBoard) {
       myFuncTwo(9)
     }
-  }
-
-  /*
-  let color;
-  if(content === "✕") color = "xcolor"
-  if(content === "◯") color = "ocolor"
-
-  return <button className="button" id={color} onClick={handleClick}>{content}</button>;
-  */
+  };
 
   return <button className="button" onClick={handleClick} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>{content}</button>;
 
 }
-
-//Square.propTypes = {
-//  myFunc: React.PropTypes.func
-//}
 
 export default Square;
