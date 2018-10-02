@@ -49,7 +49,8 @@ class Game extends Component {
       console.log('turn', this.state.turn)
       console.log(this.state.boardpositions[move[0]][move[1]], this.getCurrentTurnMark())
       if(this.state.boardpositions[move[0]][move[1]] != this.getCurrentTurnMark() && this.state.boardpositions[move[0]][move[1]] === ' ') {
-        this.handleOnlineOpponentsMove(nextProps.turnPlayedData.tile)
+        //this.handleOnlineOpponentsMove(nextProps.turnPlayedData.tile)
+        this.handleMove(nextProps.turnPlayedData.tile)
       }
 
       //this.setState({waitingForTurn: false})
@@ -83,8 +84,32 @@ class Game extends Component {
 
 	handleMove(squareClicked) {
     console.log("squareClicked")
+
+    const {turn, boardpositions, availableBoard} = this.state
+    const outerboard = squareClicked[0], innerboard = squareClicked[1], currentBoard = boardpositions[outerboard]
+    boardpositions[outerboard][innerboard] = this.getCurrentTurnMark();
+    this.setState({turn: this.getNextTurnMark(), boardpositions}); //boardpositions same as "boardpostions: boardposition"
+    if(boardpositions[9][outerboard] === ' ') this.didWin(currentBoard, squareClicked)
+
+    let next
+    if(this.checkForMagicBox(squareClicked)) next = 9
+    else next = innerboard
+
+    this.setState({availableBoard: next})
+
+    if(this.props.roomID && !this.state.waitingForTurn) {
+      this.setState({availableBoard: next, waitingForTurn: true})
+      socket.emit('playTurn', { tile: squareClicked, room: this.props.roomID })
+    }
+
+    if(this.state.waitingForTurn) {
+      this.setState({waitingForTurn: false})
+    }
+
+    /*
     if(this.props.roomID == null) this.handleLocalMove(squareClicked)
     if(this.props.roomID && !this.state.waitingForTurn) this.handleOnlineMove(squareClicked)
+    */
   };
 
 
@@ -97,9 +122,11 @@ class Game extends Component {
   handleLocalMove(squareClicked) {
     const {turn, boardpositions, availableBoard} = this.state
     const outerboard = squareClicked[0], innerboard = squareClicked[1], currentBoard = boardpositions[outerboard]
+    /*
     boardpositions[outerboard][innerboard] = this.getCurrentTurnMark();
     this.setState({turn: this.getNextTurnMark(), boardpositions}); //boardpositions same as "boardpostions: boardposition"
     if(boardpositions[9][outerboard] === ' ') this.didWin(currentBoard, squareClicked)
+      */
 
     let next
     if(this.checkForMagicBox(squareClicked)) next = 9
@@ -113,15 +140,17 @@ class Game extends Component {
     console.log("CURRENT PLAYERS MOVE")
     const {turn, boardpositions, availableBoard} = this.state
     const outerboard = squareClicked[0], innerboard = squareClicked[1], currentBoard = boardpositions[outerboard]
+    /*
     boardpositions[outerboard][innerboard] = this.getCurrentTurnMark();
-    this.setState({boardpositions});
+    this.setState({turn: this.getNextTurnMark(), boardpositions});
     if(boardpositions[9][outerboard] === ' ') this.didWin(currentBoard, squareClicked)
+    */
 
     let next
     if(this.checkForMagicBox(squareClicked)) next = 9
     else next = innerboard
 
-    this.setState({availableBoard: next, turn: this.getNextTurnMark(), waitingForTurn: true})
+    this.setState({availableBoard: next, waitingForTurn: true})
     socket.emit('playTurn', { tile: squareClicked, room: this.props.roomID })
 
   }
@@ -131,15 +160,17 @@ class Game extends Component {
     console.log("OPPO MOVE")
     const {turn, boardpositions, availableBoard, allBoards} = this.state 
     const outerboard = squareClicked[0], innerboard = squareClicked[1], currentBoard = boardpositions[outerboard]
+    
     boardpositions[outerboard][innerboard] = this.getCurrentTurnMark(); 
-    this.setState({boardpositions}); 
+    this.setState({turn: this.getNextTurnMark(), boardpositions}); 
     if(this.state.boardpositions[9][outerboard] === ' ') this.didWin(currentBoard, squareClicked)
-
+    
+  
     let next
     if(this.checkForMagicBox(squareClicked)) next = 9
     else next = innerboard
 
-    this.setState({availableBoard: next, turn: this.getNextTurnMark(), waitingForTurn: false})
+    this.setState({availableBoard: next, waitingForTurn: false})
   }
 
 
