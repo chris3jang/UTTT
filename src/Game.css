@@ -20,7 +20,7 @@
 	*/
 }
 
-.turnCounterLeft {
+.turnLeftNext {
 	height: 40px;
 	width: 40px;
 	line-height: 40px;
@@ -34,7 +34,8 @@
 	transition: width .5s, height .5s, line-height .5s, font-size .5s;
 }
 
-.turnCounterRight {
+
+.turnRightNext {
 	position: absolute;
 	right: 0;
 
@@ -51,7 +52,7 @@
 	transition: width .5s, height .5s, line-height .5s, font-size .5s;
 }
 
-.currentTurnLeft {
+.turnLeftCurrent {
 	height: 100px;
 	width: 100px;
 	line-height: 100px;
@@ -65,7 +66,8 @@
 	transition: width .5s, height .5s, line-height .5s, font-size .5s;
 }
 
-.currentTurnRight {
+
+.turnRightCurrent {
 	position: absolute;
 	right: 0;
 
@@ -85,4 +87,42 @@
 .onlineOpponent {
 	border-color: grey;
 	color: grey;
+}
+
+.victoryContainer {
+	position: absolute;
+	left: 50%;
+}
+
+.victoryEmpty {
+	position: relative;
+	height: 498px;
+	width: 498px;
+	line-height: 498px;
+	background: white;
+	left: -50%;
+	border-radius: 10px;
+	text-align: center;
+
+	opacity: 0;
+
+	transition: opacity 2s;
+}
+
+.victoryMessage {
+
+	position: relative;
+	height: 498px;
+	width: 498px;
+	background: white;
+	left: -50%;
+	border-radius: 10px;
+	text-align: center;
+	z-index: 2;
+	border: 3px solid black;
+
+	opacity: 1;
+
+	transition: opacity 2s;
+	
 }
