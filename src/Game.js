@@ -24,7 +24,7 @@ class Game extends Component {
         [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
         [ " ", " ", " ", " ", " ", " ", " ", " ", " " ]
       ],
-      winIDs: [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+      winIDs: [ " ", " ", " ", " ", " ", " ", " ", " ", " ", " " ],
       availableBoard: 9,
       waitingForTurn: null,
       nextPotentialBoard: null,
@@ -141,15 +141,12 @@ class Game extends Component {
   }
 
   didWinGame() {
-    if(this.didWinBoard(this.state.boardPositions[9])) {
-      this.wonGame();
+    const mark = this.didWinBoard(this.state.boardPositions[9])
+    if(mark){
+      this.markWin(9, mark)
+      console.log("WON")
+      this.setState({gameWon: true});
     }
-  };
-
-
-  wonGame() {
-    console.log("WON")
-    this.setState({gameWon: true});
   };
 
   handleHover(squareHovered) {

@@ -19,7 +19,7 @@ const Square = ({content, position, availableBoard, newGameHasStarted, listenFor
 
   const handleMouseOut = () => {
     if(isActiveBoard) {
-      listenForHover(9)
+      listenForHover(availableBoard)
     }
   };
 
