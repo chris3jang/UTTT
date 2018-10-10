@@ -10,16 +10,16 @@ const Square = ({content, position, availableBoard, newGameHasStarted, listenFor
       listenForMove(position);
     }
   };
-
+  
   const handleMouseOver = () => {
     if(isActiveBoard) {
-      listenForHover(position[1]);
+      listenForHover(position[1], "innerhover");
     }
   };
 
   const handleMouseOut = () => {
     if(isActiveBoard) {
-      listenForHover(availableBoard)
+      listenForHover(availableBoard, "innerout")
     }
   };
 

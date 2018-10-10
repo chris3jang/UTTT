@@ -24,12 +24,21 @@
 	border-bottom-right-radius: 10px;
 }
 
+.smallTableNext {
+	border-collapse: collapse;
+	margin: auto;
+
+	transition: none;
+
+	opacity: 1;
+
+}
+
 .smallTable {
 	border-collapse: collapse;
 	margin: auto;
 }
 
-/*
 .smallTableWon {
 	border-collapse: collapse;
 	margin: auto;
@@ -40,7 +49,23 @@
     transition-duration: 2s;
     transition-delay: 4s;
 }
-*/
+
+.smallTableWonNoTransOff {
+	border-collapse: collapse;
+	margin: auto;
+
+	opacity: 0;
+
+	transition: none;
+}
+
+.smallTableWonNoTransHover {
+	border-collapse: collapse;
+	margin: auto;
+
+	transition: none;
+	opacity: 1;
+}
 
 .innerboard {
 	border: 1px solid black;
@@ -59,13 +84,11 @@
 	position: relative;
 }
 
-.outerboardHover:hover {
-	box-shadow: inset 0 0 50px 3px grey;
+.outerboardShadow {
+	box-shadow: inset 0 0 50px 10px grey;
 }
 
-.nextBoard {
-	background: #e6e6e6;
-}
+
 
 .outerboardWon {
 	position: absolute;
@@ -77,6 +100,36 @@
 	text-align: center;
 	top: 0;
 	left: 0;
+}
+
+.outerboardWonAvailable {
+	position: absolute;
+	height: 162px;
+	width: 162px;
+	line-height: 162px;
+	font-size: 140px;
+	z-index: -1;
+	text-align: center;
+	top: 0;
+	left: 0;
+
+	opacity: 0;
+}
+
+
+
+
+.nextBoard {
+	background: #e6e6e6;
+	z-index: -1;
+}
+
+.bold {
+	background: #e6e6e6;
+}
+
+.nextBoardWon {
+	background: #e6e6e6;
 }
 
 .previousOuterboardWon {
@@ -106,14 +159,13 @@
 
 	opacity: 1;
 
-	/*
+	
 	transition-property: opacity;
     transition-duration: 2s;
     transition-delay: 4s;
-    */
+    
 }
 
-/*
 .winMarkFadeOut {
 	position: absolute;
 	height: 162px;
@@ -132,7 +184,36 @@
     transition-delay: 4s;
 
 }
-*/
+
+.winMarkNoTransHover {
+	position: absolute;
+	height: 162px;
+	width: 162px;
+	line-height: 162px;
+	font-size: 150px;
+	z-index: -2;
+	text-align: center;
+	top: 0;
+	left: 0;
+
+	opacity: 1;
+	transition: none;
+}
+
+.winMarkNoTransOff {
+	position: absolute;
+	height: 162px;
+	width: 162px;
+	line-height: 162px;
+	font-size: 150px;
+	z-index: -2;
+	text-align: center;
+	top: 0;
+	left: 0;
+
+	opacity: 0;
+	transition: none;
+}
 
 .svgclass {
 	height: 100%;
@@ -210,10 +291,6 @@ positioning
     padding-top: 29px;
 ">X</div>
 */
-
-.bold {
-	background: #e6e6e6;
-}
 
 .xcolor {
 	border-color: #7A06C0 !important;

@@ -7,11 +7,32 @@ const socket = openSocket('http://localhost:8080');
 
 class Game extends Component {
 
-	state = this.getInitialState();
+  state = this.getInitialState();
 
   getInitialState() {
     return ({
       turn: null,
+
+      /*
+        boardData[0-8]: inner board positions
+        boardData[9]: outer board positions
+        boardData[10]: victory mark IDs
+        boardData[11]: is victory mark transition complete
+      */
+      boardData: [
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ null, null, null, null, null, null, null, null, null ] //check if [9] is the same thing
+      ],
       boardPositions: [
         [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
         [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
@@ -27,7 +48,7 @@ class Game extends Component {
       winIDs: [ " ", " ", " ", " ", " ", " ", " ", " ", " ", " " ],
       availableBoard: 9,
       waitingForTurn: null,
-      nextPotentialBoard: null,
+      nextPotentialBoard: [null, null],
       gameWon: false
     });
   };
@@ -97,7 +118,7 @@ class Game extends Component {
     if(this.checkForMagicBox(innerboard)) next = 9;
     else next = innerboard;
 
-    this.setState({availableBoard: next, nextPotentialBoard: next});
+    this.setState({availableBoard: next});
   }
 
   didWinBoard(board) {
@@ -132,6 +153,9 @@ class Game extends Component {
       console.log("won an inner box");
       if(boardPositions[9][outerboard]) {
         boardPositions[9][outerboard] = turn;
+
+        this.state.boardData[11][outerboard] = false;
+        console.log("transition state set in Game, transition begins")
       }
       if(this.props.gameSettings === "one") {
         this.wonGame();
@@ -149,12 +173,29 @@ class Game extends Component {
     }
   };
 
-  handleHover(squareHovered) {
-    this.setState({nextPotentialBoard: squareHovered});
+  handleHover(squareHovered, action) {
+    console.log(squareHovered, action)
+    let temp = this.state.nextPotentialBoard
+    if(action === "outer") {
+      temp[0] = squareHovered
+    }
+    if(action === "innerhover" || action === "innerout") {
+      temp[1] = squareHovered
+    }
+    /*
+    this.setState({nextPotentialBoard: temp})
+    if(action === "innerout") this.completeTransition(squareHovered)
+      */
+  }
+
+  completeTransition(pos) {
+    let editedBoardData = this.state.boardData;
+    editedBoardData[11][pos] = true;
+    this.setState({boardData: editedBoardData}, console.log("completeTransition called in Game, transition completely ended"));
   }
 
   render() {
-  	const {turn, boardPositions, availableBoard, winIDs, nextPotentialBoard, gameWon} = this.state;
+    const {turn, boardPositions, availableBoard, winIDs, nextPotentialBoard, gameWon} = this.state;
     const {player, newGameHasStarted} = this.props;
 
     const getTurnClassName = (side) => {
@@ -178,16 +219,18 @@ class Game extends Component {
         <div className={"victoryContainer"}>
           <div className={gameWon ? "victoryMessage": "victoryEmpty"}>YOU WON</div>
         </div>
-      	<TTT 
+        <TTT 
           newGameHasStarted={newGameHasStarted}
-      		isBoardSet={false}
-      		boardPositions={boardPositions}
-      		listenForMove={this.handleMove.bind(this)}
+          isBoardSet={false}
+          boardPositions={boardPositions}
+          boardData={this.state.boardData}
+          completeTransition={this.completeTransition.bind(this)}
+          listenForMove={this.handleMove.bind(this)}
           listenForHover={this.handleHover.bind(this)}
           availableBoard={availableBoard}
           winIDs={winIDs}
           nextPotentialBoard={nextPotentialBoard}>
-      	</TTT>
+        </TTT>
       </div>
     );
   }
