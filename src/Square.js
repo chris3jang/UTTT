@@ -10,7 +10,8 @@ const Square = ({content, position, availableBoard, newGameHasStarted, listenFor
       listenForMove(position);
     }
   };
-  
+
+  /*
   const handleMouseOver = () => {
     if(isActiveBoard) {
       listenForHover(position[1], "innerhover");
@@ -23,8 +24,12 @@ const Square = ({content, position, availableBoard, newGameHasStarted, listenFor
     }
   };
 
+  onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}
+
+  */
+
   return (
-    <button className="button" onClick={handleClick} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
+    <button className="button" onClick={handleClick}>
       {content}
     </button>
   );

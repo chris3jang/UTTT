@@ -16,11 +16,11 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
     const largeTileWon = (isBoardSet ? (boardPositions[9][boardNumber] !== ' ') : null)
 
     const wins = {
-      "012": <path d="M10 31 L152 31" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"012"}></path>,
-      "345": <path d="M10 81 L152 81" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"345"}></path>,
-      "678": <path d="M10 131 L152 131" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"678"}></path>,
-      "036": <path d="M31 10 L31 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"036"}></path>,
-      "147": <path d="M81 10 L81 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"147"}></path>,
+      "012": <path d="M10 30 L152 30" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"012"}></path>,
+      "345": <path d="M10 82 L152 82" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"345"}></path>,
+      "678": <path d="M10 133 L152 133" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"678"}></path>,
+      "036": <path d="M30 10 L30 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"036"}></path>,
+      "147": <path d="M82 10 L82 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"147"}></path>,
       "258": <path d="M131 10 L131 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"258"}></path>,
       "048": <path d="M10 10 L152 152"  stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"048"}></path>,
       "246": <path d="M152 10 L10 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"246"}></path>
@@ -33,26 +33,27 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
         classnames += "outerboard";
         //if(newGameHasStarted) classnames += " outerboardHover";
         if(nextPotentialBoard[0] === 3*r+s) classnames += " outerboardShadow"
-        if(3*r+s===availableBoard) classnames += " bold";
+        //if(3*r+s===availableBoard) classnames += " bold";
         else if(nextPotentialBoard[1] === 3*r+s) classnames += " nextBoard";
-        else if(availableBoard === 9 && newGameHasStarted) classnames += " bold";
+        //else if(availableBoard === 9 && newGameHasStarted) classnames += " bold";
       }
       return classnames;
     }
 
-    const getSmallTableClass = () => {
-      if(boardData[11][boardNumber] === true) {
-        if(boardNumber === availableBoard) return "smallTableWonNoTransHover";
-        if(nextPotentialBoard[1] === boardNumber) return "smallTableWonNoTransHover";
-        if(nextPotentialBoard[0] === boardNumber) return "smallTableWonNoTransHover";
-        if(nextPotentialBoard[0] !== boardNumber) return "smallTableWonNoTransOff"
+    const getSmallTableClass = (num) => {
+      if(boardData[11][num] === true) {
+        console.log('num', num, 'availableBoard', availableBoard, 'nextPotentialBoard', nextPotentialBoard)
+        if(num === availableBoard) return "smallTableWonNoTransHover";
+        if(nextPotentialBoard[1] === num) return "smallTableWonNoTransHover";
+        if(nextPotentialBoard[0] === num) return "smallTableWonNoTransHover";
+        if(nextPotentialBoard[0] !== num) return "smallTableWonNoTransOff"
       }
-      else if(boardData[11][boardNumber] === false) {
-        if(nextPotentialBoard[1] === boardNumber) return "smallTableWonNoTransHover"
+      else if(boardData[11][num] === false) {
+        if(nextPotentialBoard[1] === num) return "smallTableWonNoTransHover"
         else return "smallTableWon"
       }
       else {
-        if(boardNumber === nextPotentialBoard[0]) return "smallTableNext"
+        if(num === nextPotentialBoard[0]) return "smallTableNext"
         if(!largeTileWon) return "smallTable"
       }
     };
@@ -69,8 +70,8 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
         else return "winMarkFadeOut"
       }
       else {
-        if(num === nextPotentialBoard[0]) return "winMarkNoTransHover"
         if(boardPositions[9][num] == ' ') return "winMark"
+        if(num === nextPotentialBoard[0]) return "winMarkNoTransHover"
       }
     };
 
@@ -93,7 +94,9 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
       }
     };
 
-    
+    const isActive = (num) => {
+      return ((boardNumber === availableBoard || (availableBoard === 9 && newGameHasStarted)) && boardPositions[boardNumber][num] === " ");
+    }
 
 
     const completeTransitionHere = (pos) => {
@@ -108,8 +111,10 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
       if(newGameHasStarted) {
         if(isBoardSet) {
           if([boardNumber, 9].includes(availableBoard) && boardPositions[boardNumber][number] === ' ') {
+            console.log(number)
             //listenForHover(number)
             //getElStyle("outerboard", number).background = "#e6e6e6"
+            listenForHover(number, "innerhover")
           }
         }
         else {
@@ -135,6 +140,7 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
             //listenForHover(availableBoard)
             //getElStyle("outerboard", number).background = "transparent"
             //getElStyle("outerboard", availableBoard).background = "#e6e6e6"
+            listenForHover(availableBoard, "innerout")
           }
         }
         else {
@@ -159,7 +165,7 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
     const renderBoard = (content) => {
       return (
         <div className={!isBoardSet ? "fullBoard" : ""}>
-          <table id={isBoardSet && largeTileWon ? ("smallTable" + boardNumber) : ""} className={!isBoardSet ? "bigTable" : getSmallTableClass()} onTransitionEnd={()=>completeTransitionHere(boardNumber)}>
+          <table id={isBoardSet && largeTileWon ? ("smallTable" + boardNumber) : ""} className={!isBoardSet ? "bigTable" : getSmallTableClass(boardNumber)} onTransitionEnd={()=>completeTransitionHere(boardNumber)}>
             <tbody id={!isBoardSet ? "" : "center"}>
               {[0, 1, 2].map((row) => 
                 <tr>
@@ -201,24 +207,45 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
               boardNumber={3*r+s}
               availableBoard={availableBoard}
               newGameHasStarted={newGameHasStarted}
-              nextPotentialBoard={nextPotentialBoard}>
+              nextPotentialBoard={nextPotentialBoard}
+              boardData={boardData}
+              winIDs={winIDs}
+              completeTransition={completeTransition}>
             </TTT>
-            <div id={('winMark' + (3*r+s))} className={getWinMarkClass(3*r+s)} onTransitionEnd={()=>completeTransitionHere(3*r+s)}>
-              <svg className={"svgclass"}>
-                {wins[winIDs[3*r+s]]}
-              </svg>
-            </div>
             {boardPositions[9][3*r+s] !== ' ' && 
              <div id={"outerboardWon"+(3*r+s)} className={getOuterboardWonClass(3*r+s)}>
                {(boardPositions[9][3*r+s])}
              </div>
             } 
+            <div className={(3*r+s===availableBoard || (availableBoard === 9 && newGameHasStarted) ? "backgroundColor" : "")}></div>
           </div>
         );
       }
     }
 
     return (
+      <div>
+        <div className="board">{
+          renderBoard((row, space) => 
+            createBoard(row, space, isBoardSet)
+          )}
+        </div>
+        {(!isBoardSet ? winIDs[9] : true) &&
+          <div className={isBoardSet ? getWinMarkClass(boardNumber) : "bigWinMark"}>
+            <svg className={isBoardSet ? "svgclass" : "bigSvgClass"}>
+              <g transform={"scale(" + (isBoardSet ? 1 : 3) + ")"}>
+                {wins[winIDs[(isBoardSet ? boardNumber : 9)]]}
+              </g>
+            </svg>
+          </div>
+        }
+      </div>
+      
+    );
+} 
+
+/*
+return (
       <div className="board">{
         renderBoard((row, space) => 
           createBoard(row, space, isBoardSet)
@@ -235,7 +262,19 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
       </div>
     );
 
-  //};
-} 
+
+<div id={('winMark' + (3*r+s))} className={getWinMarkClass(3*r+s)} onTransitionEnd={()=>completeTransitionHere(3*r+s)}>
+              <svg className={"svgclass"}>
+                {wins[winIDs[3*r+s]]}
+              </svg>
+            </div>
+
+
+
+
+
+*/
+
+
 
 export default TTT;

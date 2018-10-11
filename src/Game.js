@@ -174,7 +174,7 @@ class Game extends Component {
   };
 
   handleHover(squareHovered, action) {
-    console.log(squareHovered, action)
+    console.log("handleHover", squareHovered, action)
     let temp = this.state.nextPotentialBoard
     if(action === "outer") {
       temp[0] = squareHovered
@@ -182,16 +182,19 @@ class Game extends Component {
     if(action === "innerhover" || action === "innerout") {
       temp[1] = squareHovered
     }
-    /*
+    
     this.setState({nextPotentialBoard: temp})
+    /*
     if(action === "innerout") this.completeTransition(squareHovered)
       */
   }
 
   completeTransition(pos) {
-    let editedBoardData = this.state.boardData;
-    editedBoardData[11][pos] = true;
-    this.setState({boardData: editedBoardData}, console.log("completeTransition called in Game, transition completely ended"));
+    if(this.props.newGameHasStarted) {
+      let editedBoardData = this.state.boardData;
+      editedBoardData[11][pos] = true;
+      this.setState({boardData: editedBoardData});
+    }
   }
 
   render() {

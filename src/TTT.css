@@ -128,6 +128,10 @@
 	background: #e6e6e6;
 }
 
+.bold svg{
+	z-index: 1
+}
+
 .nextBoardWon {
 	background: #e6e6e6;
 }
@@ -145,6 +149,16 @@
 	left: 0;
 }
 
+.backgroundColor {
+	position: absolute;
+	height: 162px;
+	width: 162px;
+	z-index: -3;
+	text-align: center;
+	top: 0;
+	left: 0;
+	background: #e6e6e6
+}
 
 .winMark {
 	position: absolute;
