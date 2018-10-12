@@ -5,7 +5,7 @@ import Square from './Square.js';
 //class TTT extends Component {
 
 const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, availableBoard, 
-      boardPositions, boardNumber, listenForMove, listenForHover, winIDs, completeTransition }) => {
+      boardPositions, boardNumber, listenForMove, listenForHover, winIDs, completeTransition, gameWon }) => {
 
   //render() {
     /*
@@ -15,13 +15,21 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
 
     const largeTileWon = (isBoardSet ? (boardPositions[9][boardNumber] !== ' ') : null)
 
+    let temp, id = ""
+    if(isBoardSet) temp = boardNumber
+    else temp = 9
+    for(let i = 0; i < 3; i++) {
+      id += winIDs[temp][i];
+    }
+    const winID = id
+
     const wins = {
-      "012": <path d="M10 30 L152 30" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"012"}></path>,
-      "345": <path d="M10 82 L152 82" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"345"}></path>,
+      "012": <path d="M10 29 L152 29" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"012"}></path>,
+      "345": <path d="M10 81 L152 81" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"345"}></path>,
       "678": <path d="M10 133 L152 133" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"678"}></path>,
-      "036": <path d="M30 10 L30 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"036"}></path>,
-      "147": <path d="M82 10 L82 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"147"}></path>,
-      "258": <path d="M131 10 L131 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"258"}></path>,
+      "036": <path d="M29 10 L29 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"036"}></path>,
+      "147": <path d="M81 10 L81 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"147"}></path>,
+      "258": <path d="M132 10 L132 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"258"}></path>,
       "048": <path d="M10 10 L152 152"  stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"048"}></path>,
       "246": <path d="M152 10 L10 152" stroke="#000000" stroke-width="5" className={isBoardSet ? "smallPath" : "bigPath"} id={"246"}></path>
     };
@@ -34,7 +42,7 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
         //if(newGameHasStarted) classnames += " outerboardHover";
         if(nextPotentialBoard[0] === 3*r+s) classnames += " outerboardShadow"
         //if(3*r+s===availableBoard) classnames += " bold";
-        else if(nextPotentialBoard[1] === 3*r+s) classnames += " nextBoard";
+        else if(nextPotentialBoard[1] === 3*r+s && !gameWon) classnames += " nextBoard";
         //else if(availableBoard === 9 && newGameHasStarted) classnames += " bold";
       }
       return classnames;
@@ -42,13 +50,15 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
 
     const getSmallTableClass = (num) => {
       if(boardData[11][num] === true) {
-        console.log('num', num, 'availableBoard', availableBoard, 'nextPotentialBoard', nextPotentialBoard)
+        console.log("1eyo")
         if(num === availableBoard) return "smallTableWonNoTransHover";
-        if(nextPotentialBoard[1] === num) return "smallTableWonNoTransHover";
+        if(nextPotentialBoard[1] === num && !gameWon) return "smallTableWonNoTransHover";
         if(nextPotentialBoard[0] === num) return "smallTableWonNoTransHover";
         if(nextPotentialBoard[0] !== num) return "smallTableWonNoTransOff"
       }
       else if(boardData[11][num] === false) {
+        console.log("2eyo")
+        if(winIDs[9].includes(availableBoard)) return "smallTableWonNoTransOff"
         if(nextPotentialBoard[1] === num) return "smallTableWonNoTransHover"
         else return "smallTableWon"
       }
@@ -61,11 +71,12 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
     const getWinMarkClass = (num) => {
       if(boardData[11][num] === true) {
         if(num === availableBoard) return "winMarkNoTransHover";
-        if(nextPotentialBoard[1] === num) return "winMarkNoTransHover"
+        if(nextPotentialBoard[1] === num && !gameWon) return "winMarkNoTransHover"
         if(nextPotentialBoard[0] === num) return "winMarkNoTransHover";
         if(nextPotentialBoard[0] !== num) return "winMarkNoTransOff"
       }
       else if(boardData[11][num] === false) {
+        if(winIDs[9].includes(availableBoard)) return "winMarkNoTransOff"
         if(nextPotentialBoard[1] === num) return "winMarkNoTransHover"
         else return "winMarkFadeOut"
       }
@@ -80,11 +91,12 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
     const getOuterboardWonClass = (num) => {
       if(boardData[11][num] === true) {
         if(num === availableBoard) return "outerboardWonAvailable";
-        if(nextPotentialBoard[1] === num) return "outerboardWonAvailable"
+        if(nextPotentialBoard[1] === num && !gameWon) return "outerboardWonAvailable"
         if(nextPotentialBoard[0] === num) return "outerboardWonAvailable";
         if(nextPotentialBoard[0] !== num) return "outerboardWon"
       }
       else if(boardData[11][num] === false) {
+        if(winIDs[9].includes(availableBoard)) return "outerboardWon"
         if(nextPotentialBoard[1] === num) return "outerboardWonAvailable"
         else return "outerboardWon"
       }
@@ -217,7 +229,7 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
                {(boardPositions[9][3*r+s])}
              </div>
             } 
-            <div className={(3*r+s===availableBoard || (availableBoard === 9 && newGameHasStarted) ? "backgroundColor" : "")}></div>
+            <div className={(((3*r+s===availableBoard || (availableBoard === 9 && newGameHasStarted)) && !gameWon) ? "backgroundColor" : "")}></div>
           </div>
         );
       }
@@ -233,8 +245,8 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
         {(!isBoardSet ? winIDs[9] : true) &&
           <div className={isBoardSet ? getWinMarkClass(boardNumber) : "bigWinMark"}>
             <svg className={isBoardSet ? "svgclass" : "bigSvgClass"}>
-              <g transform={"scale(" + (isBoardSet ? 1 : 3) + ")"}>
-                {wins[winIDs[(isBoardSet ? boardNumber : 9)]]}
+              <g transform={"scale(" + (isBoardSet ? 1 : 3.1) + ")"}>
+                {wins[winID]}
               </g>
             </svg>
           </div>
@@ -270,7 +282,7 @@ return (
             </div>
 
 
-
+{wins[winIDs[(isBoardSet ? boardNumber : 9)]]}
 
 
 */

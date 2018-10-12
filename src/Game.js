@@ -49,7 +49,8 @@ class Game extends Component {
       availableBoard: 9,
       waitingForTurn: null,
       nextPotentialBoard: [null, null],
-      gameWon: false
+      gameWon: false,
+      victoryMessage: false
     });
   };
 
@@ -108,17 +109,23 @@ class Game extends Component {
   };
 
   markMove(squareClicked) {
+    let won;
     const {turn, boardPositions, availableBoard} = this.state;
     const outerboard = squareClicked[0], innerboard = squareClicked[1], currentBoard = boardPositions[outerboard];
     boardPositions[outerboard][innerboard] = turn;
     this.setState({turn: (turn === '✕' ? '◯' : '✕'), boardPositions});
-    if(boardPositions[9][outerboard] === ' ') this.didWin(currentBoard, squareClicked);
+    if(boardPositions[9][outerboard] === ' ') {
+      this.didWin(currentBoard, squareClicked);
+      won = this.didWinGame(squareClicked);
+    }
 
     let next;
     if(this.checkForMagicBox(innerboard)) next = 9;
     else next = innerboard;
 
-    this.setState({availableBoard: next});
+    console.log("eyoooo", this.state.gameWon)
+    if(won) next = 9
+    this.setState({availableBoard: next}, console.log("EOIHS", this.state.availableBoard));
   }
 
   didWinBoard(board) {
@@ -149,7 +156,12 @@ class Game extends Component {
     const {turn, boardPositions} = this.state;
     const mark = this.didWinBoard(board), outerboard = squareClicked[0];
     if(mark) {
-      this.markWin(outerboard, mark);
+      //this.markWin(outerboard, mark);
+      //
+      let updatedWins = this.state.winIDs;
+      updatedWins[outerboard] = mark
+      this.setState({winIDs: updatedWins})
+      //
       console.log("won an inner box");
       if(boardPositions[9][outerboard]) {
         boardPositions[9][outerboard] = turn;
@@ -158,19 +170,28 @@ class Game extends Component {
         console.log("transition state set in Game, transition begins")
       }
       if(this.props.gameSettings === "one") {
-        this.wonGame();
+        //this.wonGame();
       }
-      else this.didWinGame();
     }
   }
 
-  didWinGame() {
+  didWinGame(squareClicked) {
     const mark = this.didWinBoard(this.state.boardPositions[9])
     if(mark){
-      this.markWin(9, mark)
-      console.log("WON")
-      this.setState({gameWon: true});
+      //this.markWin(9, mark)
+      //
+      let updatedWins = this.state.winIDs;
+      updatedWins[9] = mark
+      this.setState({winIDs: updatedWins})
+
+      let finalTransition = this.state.boardData
+      finalTransition[11][squareClicked[0]] = true
+      //
+      console.log("WON", this.state.turn)
+      this.setState({gameWon: true, victoryMessage: true, boardData: finalTransition}, ()=>console.log(this.state.availableBoard));
+      return true;
     }
+    else return false;
   };
 
   handleHover(squareHovered, action) {
@@ -197,6 +218,10 @@ class Game extends Component {
     }
   }
 
+  removeVictoryMessage() {
+    this.setState({victoryMessage: false})
+  }
+
   render() {
     const {turn, boardPositions, availableBoard, winIDs, nextPotentialBoard, gameWon} = this.state;
     const {player, newGameHasStarted} = this.props;
@@ -215,12 +240,12 @@ class Game extends Component {
 
     return (
       <div className="game">
-        <div className={newGameHasStarted ? "counterContainer" : "gameNotInPlay"}>
+        <div className={newGameHasStarted && !gameWon ? "counterContainer" : "gameNotInPlay"}>
           <div className={getTurnClassName('Left')}>✕</div>
           <div className={getTurnClassName('Right')}>◯</div>
         </div>
         <div className={"victoryContainer"}>
-          <div className={gameWon ? "victoryMessage": "victoryEmpty"}>YOU WON</div>
+          <div className={this.state.victoryMessage ? "victoryMessage": "victoryEmpty"} onClick={this.removeVictoryMessage.bind(this)}>YOU WON</div>
         </div>
         <TTT 
           newGameHasStarted={newGameHasStarted}
@@ -232,7 +257,8 @@ class Game extends Component {
           listenForHover={this.handleHover.bind(this)}
           availableBoard={availableBoard}
           winIDs={winIDs}
-          nextPotentialBoard={nextPotentialBoard}>
+          nextPotentialBoard={nextPotentialBoard}
+          gameWon={gameWon}>
         </TTT>
       </div>
     );
