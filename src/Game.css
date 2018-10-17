@@ -116,7 +116,7 @@
 
 	opacity: 0;
 
-	transition: opacity 2s;
+	transition: none;
 }
 
 .victoryMessage {
@@ -124,6 +124,7 @@
 	position: relative;
 	height: 498px;
 	width: 498px;
+	line-height: 450px;
 	background: white;
 	left: -50%;
 	border-radius: 10px;

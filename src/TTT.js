@@ -36,9 +36,9 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
 
     const getTdClassNames = (r, s) => {
       let classnames = "";
-      if(isBoardSet) classnames = "innerboard";
+      if(isBoardSet) classnames = "smallTile";
       else {
-        classnames += "outerboard";
+        classnames += "largeTile";
         //if(newGameHasStarted) classnames += " outerboardHover";
         if(nextPotentialBoard[0] === 3*r+s) classnames += " outerboardShadow"
         //if(3*r+s===availableBoard) classnames += " bold";
@@ -48,63 +48,40 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
       return classnames;
     }
 
-    const getSmallTableClass = (num) => {
+
+    const tblOpts = ["innerTable", "innerTable visible instant", "innerTable hidden instant", "innerTable hidden outerTileWinTrans"]
+    const wmOpts = ["winMark", "winMark visible instant", "winMark hidden instant", "winMark hidden outerTileWinTrans"]
+    const ibwOpts = ["innerBoardWinner hidden", "innerBoardWinner hidden", "innerBoardWinner", "innerBoardWinner"]
+
+    const getElOpts = (el) => {
+      if(el === "tbl") return tblOpts
+      if(el === "wm") return wmOpts
+      if(el === "ibw") return ibwOpts
+    }
+
+    const getClassName = (num, el) => {
       if(boardData[11][num] === true) {
-        console.log("1eyo")
-        if(num === availableBoard) return "smallTableWonNoTransHover";
-        if(nextPotentialBoard[1] === num && !gameWon) return "smallTableWonNoTransHover";
-        if(nextPotentialBoard[0] === num) return "smallTableWonNoTransHover";
-        if(nextPotentialBoard[0] !== num) return "smallTableWonNoTransOff"
-      }
-      else if(boardData[11][num] === false) {
-        console.log("2eyo")
-        if(winIDs[9].includes(availableBoard)) return "smallTableWonNoTransOff"
-        if(nextPotentialBoard[1] === num) return "smallTableWonNoTransHover"
-        else return "smallTableWon"
+      //visible because its one of your current options
+      //visible because it shows what will be the next options
+      //visible because user hovers over it
+        if((num === availableBoard 
+          || (nextPotentialBoard[1] === num && !gameWon) 
+          || nextPotentialBoard[0] === num)
+          && !winIDs[9].includes(availableBoard)) {
+          return getElOpts(el)[1]
+        }
+        else return getElOpts(el)[2]
+
+        }
+      else if(boardData[11][num] === false) {//during the transition
+        if(winIDs[9].includes(availableBoard) && nextPotentialBoard[1] !== num) return getElOpts(el)[2] //not sure this is relevant
+        else return getElOpts(el)[3]
       }
       else {
-        if(num === nextPotentialBoard[0]) return "smallTableNext"
-        if(!largeTileWon) return "smallTable"
+        if(num === nextPotentialBoard[0]) return getElOpts(el)[1]
+        else return getElOpts(el)[0]
       }
-    };
-
-    const getWinMarkClass = (num) => {
-      if(boardData[11][num] === true) {
-        if(num === availableBoard) return "winMarkNoTransHover";
-        if(nextPotentialBoard[1] === num && !gameWon) return "winMarkNoTransHover"
-        if(nextPotentialBoard[0] === num) return "winMarkNoTransHover";
-        if(nextPotentialBoard[0] !== num) return "winMarkNoTransOff"
-      }
-      else if(boardData[11][num] === false) {
-        if(winIDs[9].includes(availableBoard)) return "winMarkNoTransOff"
-        if(nextPotentialBoard[1] === num) return "winMarkNoTransHover"
-        else return "winMarkFadeOut"
-      }
-      else {
-        if(boardPositions[9][num] == ' ') return "winMark"
-        if(num === nextPotentialBoard[0]) return "winMarkNoTransHover"
-      }
-    };
-
-
-    //(nextPotentialBoard[0] !== 3*r*s || boardData[11][3*r+s] === false) ? "outerboardWon" : "outerboardWonAvailable"
-    const getOuterboardWonClass = (num) => {
-      if(boardData[11][num] === true) {
-        if(num === availableBoard) return "outerboardWonAvailable";
-        if(nextPotentialBoard[1] === num && !gameWon) return "outerboardWonAvailable"
-        if(nextPotentialBoard[0] === num) return "outerboardWonAvailable";
-        if(nextPotentialBoard[0] !== num) return "outerboardWon"
-      }
-      else if(boardData[11][num] === false) {
-        if(winIDs[9].includes(availableBoard)) return "outerboardWon"
-        if(nextPotentialBoard[1] === num) return "outerboardWonAvailable"
-        else return "outerboardWon"
-      }
-      else {
-        if(num === nextPotentialBoard[0]) return "outerboardWonAvailable"
-        if(boardPositions[9][num] == ' ') return "outerboardWonAvailable"
-      }
-    };
+    }
 
     const isActive = (num) => {
       return ((boardNumber === availableBoard || (availableBoard === 9 && newGameHasStarted)) && boardPositions[boardNumber][num] === " ");
@@ -177,7 +154,7 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
     const renderBoard = (content) => {
       return (
         <div className={!isBoardSet ? "fullBoard" : ""}>
-          <table id={isBoardSet && largeTileWon ? ("smallTable" + boardNumber) : ""} className={!isBoardSet ? "bigTable" : getSmallTableClass(boardNumber)} onTransitionEnd={()=>completeTransitionHere(boardNumber)}>
+          <table id={isBoardSet && largeTileWon ? ("smallTable" + boardNumber) : ""} className={!isBoardSet ? "bigTable" : getClassName(boardNumber, "tbl")} onTransitionEnd={()=>completeTransitionHere(boardNumber)}>
             <tbody id={!isBoardSet ? "" : "center"}>
               {[0, 1, 2].map((row) => 
                 <tr>
@@ -225,7 +202,7 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
               completeTransition={completeTransition}>
             </TTT>
             {boardPositions[9][3*r+s] !== ' ' && 
-             <div id={"outerboardWon"+(3*r+s)} className={getOuterboardWonClass(3*r+s)}>
+             <div id={"outerboardWon"+(3*r+s)} className={getClassName(3*r+s, "ibw")}>
                {(boardPositions[9][3*r+s])}
              </div>
             } 
@@ -243,7 +220,7 @@ const TTT = ({ boardData, isBoardSet, newGameHasStarted, nextPotentialBoard, ava
           )}
         </div>
         {(!isBoardSet ? winIDs[9] : true) &&
-          <div className={isBoardSet ? getWinMarkClass(boardNumber) : "bigWinMark"}>
+          <div className={isBoardSet ? getClassName(boardNumber, "wm") : "bigWinMark"}>
             <svg className={isBoardSet ? "svgclass" : "bigSvgClass"}>
               <g transform={"scale(" + (isBoardSet ? 1 : 3.1) + ")"}>
                 {wins[winID]}
