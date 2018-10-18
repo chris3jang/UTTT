@@ -12,7 +12,6 @@ class Game extends Component {
   getInitialState() {
     return ({
       turn: null,
-
       /*
         boardData[0-8]: inner board positions
         boardData[9]: outer board positions
@@ -30,25 +29,12 @@ class Game extends Component {
         [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
         [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
         [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ " ", " ", " ", " ", " ", " ", " ", " ", " ", " " ],
         [ null, null, null, null, null, null, null, null, null ] //check if [9] is the same thing
       ],
-      boardPositions: [
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " " ]
-      ],
-      winIDs: [ " ", " ", " ", " ", " ", " ", " ", " ", " ", " " ],
       availableBoard: 9,
       waitingForTurn: null,
-      nextPotentialBoard: [null, null],
+      tileHovered: [null, null],
       gameWon: false,
       victoryMessage: false
     });
@@ -73,7 +59,7 @@ class Game extends Component {
     }
     if(this.props.turnPlayedData != nextProps.turnPlayedData) {
       const move = nextProps.turnPlayedData.tile;
-      const lastMoveSpace = this.state.boardPositions[move[0]][move[1]];
+      const lastMoveSpace = this.state.boardData[move[0]][move[1]];
       if(lastMoveSpace != this.state.turn && lastMoveSpace === ' ') {
         this.handleOnlineMove(nextProps.turnPlayedData.tile);
       }
@@ -82,7 +68,7 @@ class Game extends Component {
 
   checkForMagicBox(board) {
     for(var i=0; i<9; i++) {
-      if(this.state.boardPositions[board][i] === " ") {
+      if(this.state.boardData[board][i] === " ") {
         return false;
       }
       else if(i === 8) {
@@ -110,11 +96,11 @@ class Game extends Component {
 
   markMove(squareClicked) {
     let won;
-    const {turn, boardPositions, availableBoard} = this.state;
-    const outerboard = squareClicked[0], innerboard = squareClicked[1], currentBoard = boardPositions[outerboard];
-    boardPositions[outerboard][innerboard] = turn;
-    this.setState({turn: (turn === '✕' ? '◯' : '✕'), boardPositions});
-    if(boardPositions[9][outerboard] === ' ') {
+    const {turn, boardData, availableBoard} = this.state;
+    const outerboard = squareClicked[0], innerboard = squareClicked[1], currentBoard = boardData[outerboard];
+    boardData[outerboard][innerboard] = turn;
+    this.setState({turn: (turn === '✕' ? '◯' : '✕'), boardData});
+    if(boardData[9][outerboard] === ' ') {
       this.didWin(currentBoard, squareClicked);
       won = this.didWinGame(squareClicked);
     }
@@ -143,28 +129,28 @@ class Game extends Component {
   };
 
   markWin(boardNum, winCondition) {
-    let updatedWins = this.state.winIDs;
+    let updatedWins = this.state.boardData;
     let id = "";
     for(let i = 0; i < 3; i++) {
       id += winCondition[i];
     }
-    updatedWins[boardNum] = id;
-    this.setState({winIDs: updatedWins});
+    updatedWins[10][boardNum] = id;
+    this.setState({boardData: updatedWins});
   }
 
   didWin(board, squareClicked) {
-    const {turn, boardPositions} = this.state;
+    const {turn, boardData} = this.state;
     const mark = this.didWinBoard(board), outerboard = squareClicked[0];
     if(mark) {
       //this.markWin(outerboard, mark);
       //
-      let updatedWins = this.state.winIDs;
-      updatedWins[outerboard] = mark
-      this.setState({winIDs: updatedWins})
+      let updatedWins = this.state.boardData;
+      updatedWins[10][outerboard] = mark
+      this.setState({boardData: updatedWins})
       //
       console.log("won an inner box");
-      if(boardPositions[9][outerboard]) {
-        boardPositions[9][outerboard] = turn;
+      if(boardData[9][outerboard]) {
+        boardData[9][outerboard] = turn;
 
         this.state.boardData[11][outerboard] = false;
         console.log("transition state set in Game, transition begins")
@@ -176,13 +162,13 @@ class Game extends Component {
   }
 
   didWinGame(squareClicked) {
-    const mark = this.didWinBoard(this.state.boardPositions[9])
+    const mark = this.didWinBoard(this.state.boardData[9])
     if(mark){
       //this.markWin(9, mark)
       //
-      let updatedWins = this.state.winIDs;
-      updatedWins[9] = mark
-      this.setState({winIDs: updatedWins})
+      let updatedWins = this.state.boardData;
+      updatedWins[10][9] = mark
+      this.setState({boardData: updatedWins})
 
       let finalTransition = this.state.boardData
       finalTransition[11][squareClicked[0]] = true
@@ -196,7 +182,7 @@ class Game extends Component {
 
   handleHover(squareHovered, action) {
     console.log("handleHover", squareHovered, action)
-    let temp = this.state.nextPotentialBoard
+    let temp = this.state.tileHovered
     if(action === "outer") {
       temp[0] = squareHovered
     }
@@ -204,7 +190,7 @@ class Game extends Component {
       temp[1] = squareHovered
     }
     
-    this.setState({nextPotentialBoard: temp})
+    this.setState({tileHovered: temp})
     /*
     if(action === "innerout") this.completeTransition(squareHovered)
       */
@@ -223,7 +209,7 @@ class Game extends Component {
   }
 
   render() {
-    const {turn, boardPositions, availableBoard, winIDs, nextPotentialBoard, gameWon} = this.state;
+    const {turn, boardData, availableBoard, winIDs, tileHovered, gameWon} = this.state;
     const {player, newGameHasStarted} = this.props;
 
     const getTurnClassName = (side) => {
@@ -250,15 +236,13 @@ class Game extends Component {
         <TTT 
           newGameHasStarted={newGameHasStarted}
           isBoardSet={false}
-          boardPositions={boardPositions}
           boardData={this.state.boardData}
           completeTransition={this.completeTransition.bind(this)}
           listenForMove={this.handleMove.bind(this)}
           listenForHover={this.handleHover.bind(this)}
           availableBoard={availableBoard}
-          winIDs={winIDs}
-          nextPotentialBoard={nextPotentialBoard}
-          gameWon={gameWon}>
+          tileHovered={tileHovered}
+          gameWon={this.state.gameWon}>
         </TTT>
       </div>
     );

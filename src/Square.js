@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import './Square.css';
 
-const Square = ({content, position, availableBoard, newGameHasStarted, listenForMove, listenForHover}) => {
+const Square = ({content, position, availableBoard, newGameHasStarted, listenForMove, listenForHover, gameWon}) => {
 
-  const isActiveBoard = ((position[0] === availableBoard || (availableBoard === 9 && newGameHasStarted)) && content === " ");
+  const isActiveBoard = (((position[0] === availableBoard || (availableBoard === 9 && newGameHasStarted)) && content === " ") && !gameWon);
   
   const handleClick = () => {
     if(isActiveBoard) {
