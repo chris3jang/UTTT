@@ -31,7 +31,7 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
         "048": "M10 10 L152 152" ,
         "246": "M10 152 L152 10"
       };
-      const cN = isBoardSet ? "smallPath" : "bigPath" //+ boardData[10][].includes(tileHovered[0]) && gameWon ? " hidden" : ""
+      const cN = (isBoardSet ? "smallPath" : "bigPath") + (boardData[10][9].includes(tileHovered[0]) && gameWon ? " hidden" : "")
       let temp
       if(isBoardSet) temp = boardNumber
       else temp = 9
@@ -109,7 +109,7 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
           }
         }
         else {
-          listenForHover(null, "outer")
+          listenForHover(9, "outer")
         }
       }
     }
