@@ -136,5 +136,26 @@
 
 	transition: opacity 2s;
 	transition-delay: 1s;
-	
+}
+
+.nameContainer {
+	height: 40px;
+	width: 100%;
+	font-size: 30px;
+}
+
+.removed {
+	display: none;
+}
+
+.left {
+	top: 0;
+	bottom: 0;
+}
+
+.right {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
 }

@@ -49,19 +49,28 @@ class Game extends Component {
         this.setState(this.getInitialState());
       }
     }
-    if(this.props.player != nextProps.player) {
-      if(nextProps.player == 1) {
+    if(this.props.player != nextProps.player && nextProps.player !== null) {
+      if(nextProps.player[0] == 1) {
         this.setState({waitingForTurn: false, room: this.props.roomID});
       }
-      if(nextProps.player == 2) {
+      if(nextProps.player[0] == 2) {
         this.setState({waitingForTurn: true, room: this.props.roomID});
       }
     }
-    if(this.props.turnPlayedData != nextProps.turnPlayedData) {
-      const move = nextProps.turnPlayedData.tile;
+    if(this.props.playerNum !== nextProps.playerNum) {
+      console.log("HERE", this.props.playerNum, nextProps.playerNum)
+      if(nextProps.playerNum === 1) {
+        this.setState({waitingForTurn: false, room: this.props.roomID});
+      }
+      if(nextProps.playerNum === 2) {
+        this.setState({waitingForTurn: true, room: this.props.roomID});
+      }
+    }
+    if(this.props.turnPlayedData !== nextProps.turnPlayedData && nextProps.turnPlayedData !== null) {
+      const move = nextProps.turnPlayedData;
       const lastMoveSpace = this.state.boardData[move[0]][move[1]];
       if(lastMoveSpace != this.state.turn && lastMoveSpace === ' ') {
-        this.handleOnlineMove(nextProps.turnPlayedData.tile);
+        this.handleOnlineMove(nextProps.turnPlayedData);
       }
     }
   };
@@ -90,7 +99,9 @@ class Game extends Component {
   handleOnlineMove(squareClicked) {
     this.markMove(squareClicked)
     if(this.state.waitingForTurn) {
-      this.setState({waitingForTurn: false})
+      let temp = this.state.tileHovered
+      temp[1] = 9
+      this.setState({waitingForTurn: false, tileHovered: temp})
     }
   };
 
@@ -109,9 +120,8 @@ class Game extends Component {
     if(this.checkForMagicBox(innerboard)) next = 9;
     else next = innerboard;
 
-    console.log("eyoooo", this.state.gameWon)
     if(won) next = 9
-    this.setState({availableBoard: next}, console.log("EOIHS", this.state.availableBoard));
+    this.setState({availableBoard: next});
   }
 
   didWinBoard(board) {
@@ -148,12 +158,10 @@ class Game extends Component {
       updatedWins[10][outerboard] = mark
       this.setState({boardData: updatedWins})
       //
-      console.log("won an inner box");
       if(boardData[9][outerboard]) {
         boardData[9][outerboard] = turn;
 
         this.state.boardData[11][outerboard] = false;
-        console.log("transition state set in Game, transition begins")
       }
       if(this.props.gameSettings === "one") {
         //this.wonGame();
@@ -164,30 +172,28 @@ class Game extends Component {
   didWinGame(squareClicked) {
     const mark = this.didWinBoard(this.state.boardData[9])
     if(mark){
-      //this.markWin(9, mark)
-      //
       let updatedWins = this.state.boardData;
       updatedWins[10][9] = mark
       this.setState({boardData: updatedWins})
 
       let finalTransition = this.state.boardData
       finalTransition[11][squareClicked[0]] = true
-      //
-      console.log("WON", this.state.turn)
-      this.setState({gameWon: true, victoryMessage: true, boardData: finalTransition}, ()=>console.log(this.state.availableBoard));
+      this.setState({gameWon: true, victoryMessage: true, boardData: finalTransition});
       return true;
     }
     else return false;
   };
 
   handleHover(squareHovered, action) {
-    console.log("handleHover", squareHovered, action)
     let temp = this.state.tileHovered
     if(action === "outer") {
       temp[0] = squareHovered
     }
     if(action === "innerhover" || action === "innerout") {
-      temp[1] = squareHovered
+      if(this.props.roomID !== null && this.state.waitingForTurn){
+        temp[1] = 9
+      }
+      else temp[1] = squareHovered
     }
     
     this.setState({tileHovered: temp})
@@ -218,8 +224,10 @@ class Game extends Component {
         className += "Current";
       }
       else className += "Next"
-      if((player === 1 && side === 'Right') || (player === 2 && side === 'Left')) {
-        className += " onlineOpponent";
+      if(player !== null) {
+        if((player[0] === 1 && side === 'Right') || (player[0] === 2 && side === 'Left')) {
+          className += " onlineOpponent";
+        }
       }
       return className;
     }
@@ -227,6 +235,10 @@ class Game extends Component {
     return (
       <div className="game">
         <div className={newGameHasStarted && !gameWon ? "counterContainer" : "gameNotInPlay"}>
+          <div className={"nameContainer" + (this.props.roomID === null ? " removed" : "")}>
+            <div className={"left"}>{this.props.player ? (this.props.player[0] === 1 ? this.props.player[1] : (this.props.player[0] === 2 ? this.props.player[2] : null)) : null}</div>
+            <div className={"right"}>{this.props.player ? (this.props.player[0] === 1 ? this.props.player[2] : (this.props.player[0] === 2 ? this.props.player[1] : null)) : null}</div>
+          </div>
           <div className={getTurnClassName('Left')}>✕</div>
           <div className={getTurnClassName('Right')}>◯</div>
         </div>

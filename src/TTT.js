@@ -35,7 +35,9 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
       let temp
       if(isBoardSet) temp = boardNumber
       else temp = 9
-      if((boardData[9][temp] !== ' ' && temp !== 9) || (temp === 9 && gameWon)) return <path d={winDim[id]} stroke="#000000" stroke-width="5" className={cN}></path>
+      if((boardData[9][temp] !== ' ' && temp !== 9) || (temp === 9 && gameWon)) {
+        return <path d={winDim[id]} stroke="#000000" stroke-width="5" className={cN}></path>
+      }
       else return
     }
 
@@ -45,7 +47,6 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
       else {
         classnames += "largeTile";
         if(tileHovered[0] === 3*r+s) classnames += " shadow"
-        else if(tileHovered[1] === 3*r+s && !gameWon) classnames += " nextInnerBoard";
       }
       return classnames;
     }
@@ -68,7 +69,6 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
           || (tileHovered[1] === num && !gameWon) 
           || tileHovered[0] === num)
           && !boardData[10][9].includes(availableBoard)) {
-          console.log("OVER HERE DUMMY", tileHovered[1], num, gameWon)
           return options[el][1]//getElOpts(el)[1]
         }
         else return options[el][2]//getElOpts(el)[2]

@@ -16,12 +16,11 @@ class App extends React.Component {
 	state = {
 		hasGameStarted: false,
 		gameSettings: "three",
-
 		modal: null,
-
 		onlineRoomCreateDirections: 'createGame',
 		roomID: null,
 		player: null,
+		playerNum: null,
 		turnPlayedData: null,
 
 		exitGame: null
@@ -30,39 +29,55 @@ class App extends React.Component {
 	componentDidMount() {
 		const self = this
 		socket.on('newGameCreated', data => {
-			console.log("IHEARD NEW GAME WAS CREATED")
-			console.log(data, "data")
-	  		self.setState({ onlineRoomCreateDirections: 'joinGame', roomID: data.room})
+			console.log('@', data.name)
+			let temp = this.state.player
+			temp[0] = 1
+	  		self.setState({ onlineRoomCreateDirections: 'joinGame', player: temp, playerNum: 1, roomID: data.room})
 
 		});
 
 		socket.on('player1', data => {
-			console.log("client player1 heared")
-			self.setState({hasGameStarted: true, player: 1, modal: null})
+			console.log('*')
+			let temp = this.state.player
+			temp[2] = data.player2Name
+			self.setState({ player: temp, hasGameStarted: true, modal: null})
 		})
 
 		socket.on('player2', data => {
-			console.log("client player2 heared")
-			self.setState({hasGameStarted: true, player: 2, modal: null})
+			console.log('&')
+			let temp = this.state.player
+			temp[0] = 2
+			temp[2] = data.player2Name
+			self.setState({hasGameStarted: true, player: temp, playerNum: 2, modal: null})
 		})
 
 		//figure out how to make this work inside child component
 		socket.on('turnPlayed', data => {
-			console.log("turnPlayedData": data)
-			self.setState({turnPlayedData: data})
+			self.setState({turnPlayedData: data.tile})
 		})
 		
+		socket.on('opponentExited', data => {
+			console.log("step 3")
+			self.setState({hasGameStarted: false, exitGame: true, roomID: null, player: null, turnPlayedData: null});
+		})
 	}
 
 
 
 	selectMenuOption(action) {
+		console.log("selected")
 		const {gameSettings, hasGameStarted} = this.state
 		if(action === 'one' || action === 'three' || action === 'magic') this.setState({gameSettings: action})
 		if(action === 'local') this.setState({hasGameStarted: true});
 		if(action === 'online') this.setState({modal: "online", roomID: true});
-		if(action === 'exit') this.setState({hasGameStarted: false, exitGame: true})
-		if(action === 'rules') this.setState({modal: "rules"})
+		if(action === 'exit') {
+			if(this.state.roomID !== null) {
+				console.log("step 1")
+				socket.emit('exitGame', {room: this.state.roomID})
+			}
+			this.setState({hasGameStarted: false, exitGame: true, roomID: null, player: null, turnPlayedData: null});
+		}
+		if(action === 'rules') this.setState({modal: "rules"});
 	}
 
 
@@ -77,10 +92,19 @@ class App extends React.Component {
 		// const name = 'enter name from client'
 		e.preventDefault()
 		if(e.target[0].value && !e.target[1].value) {
+			let temp
+			if(this.state.player === null) temp = []
+			else temp = this.state.player
+			temp[1] = e.target[0].value
+			this.setState({player: temp})
 			socket.emit('createGameOnline', {name: e.target[0].value})
 		}
 		if(e.target[1].value && e.target[0].value) {
-			this.setState({roomID: e.target[1].value})
+			let temp
+			if(this.state.player === null) temp = []
+			else temp = this.state.player
+			temp[1] = e.target[0].value
+			this.setState({player: temp, roomID: e.target[1].value})
 			socket.emit('joinExistingGame', {name: e.target[0].value, room: e.target[1].value})
 		}
 	}
@@ -134,6 +158,7 @@ class App extends React.Component {
         		gameSettings={gameSettings}
         		online={this.state.online}
         		player={this.state.player}
+        		playerNum={this.state.playerNum}
         		roomID={this.state.roomID}
         		turnPlayedData={this.state.turnPlayedData}
         		exitGame = {this.state.exitGame}>

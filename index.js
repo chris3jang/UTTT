@@ -5,7 +5,7 @@ const io = require('socket.io')(server);
 
 const path = require('path')
 
-let rooms = 0
+let rooms = 0, player1Name, player2Name;
 
 app.use(express.static(path.join(__dirname, 'build')));
 
@@ -24,6 +24,7 @@ io.on('connection', function(socket){
 	socket.on('createGameOnline', function(data){
 	  //do something with data
 	  console.log('CREATEGAMEONLINE data', data)
+	  player1Name = data.name;
 	  socket.join('room-' + ++rooms);
 	  socket.emit('newGameCreated', {name: data.name, room: 'room-'+rooms});
 	});
@@ -32,16 +33,14 @@ io.on('connection', function(socket){
 	 * Connect the Player 2 to the room he requested. Show error if room full.
 	 */
 	socket.on('joinExistingGame', function(data){
-		console.log("HEERERERE")
 		socket.emit('newGameCreated', {name: data.name, room: 'room-'+rooms});
 	  var room = io.nsps['/'].adapter.rooms[data.room];
 	  if( room && room.length == 1){
-	  	console.log("JOINEXISTING")
-	  	console.log('data.room', data.room)
-	  	console.log('data.name', data.name)
 	    socket.join(data.room);
-	    socket.broadcast.to(data.room).emit('player1', {});
-	    socket.emit('player2', {name: data.name, room: data.room })
+	    console.log("PLAYER1", data)
+	    socket.broadcast.to(data.room).emit('player1', {player2Name: data.name});
+	    console.log("PLAYER2", data.name)
+	    socket.emit('player2', {player2Name: player1Name, room: data.room })
 	  }
 	  else {
 	    socket.emit('err', {message: 'Sorry, The room is full!'});
@@ -52,8 +51,6 @@ io.on('connection', function(socket){
 	 * Handle the turn played by either player and notify the other. 
 	 */
 	socket.on('playTurn', function(data){
-		console.log("TURN PLAYED")
-		console.log(data)
 	  socket.to(data.room).emit('turnPlayed', {
 	    tile: data.tile,
 	    room: data.room
@@ -66,6 +63,14 @@ io.on('connection', function(socket){
 	socket.on('gameEnded', function(data){
 	  socket.broadcast.to(data.room).emit('gameEnd', data);
 	}); // We'll replace this with our own events
+
+	socket.on('exitGame', function(data) {
+	  console.log("step 2", data.room)
+	  socket.to(data.room).emit('opponentExited', data)
+	  socket.broadcast.to(data.room).emit('opponentExited', data)
+	  socket.emit('opponentExited', data)
+	});
+
 });
 
 server.listen(process.env.PORT || 8080, () => {console.log("index.js is running")});
