@@ -68,7 +68,7 @@ class App extends React.Component {
 	selectMenuOption(action) {
 		console.log("selected")
 		const {gameSettings, hasGameStarted} = this.state
-		if(action === 'one' || action === 'three' || action === 'magic') this.setState({gameSettings: action})
+		//if(action === 'one' || action === 'three' || action === 'magic') this.setState({gameSettings: action})
 		if(action === 'local') this.setState({hasGameStarted: true});
 		if(action === 'online') this.setState({modal: "onlineForm", roomID: true});
 		if(action === 'exit') {
@@ -84,7 +84,8 @@ class App extends React.Component {
 
 	closeModal() {
 		const {modal} = this.state
-		this.setState({modal: null});
+
+		this.setState({modal: null, roomID: null, player: null, turnPlayedData: null});
 	}
 
 
@@ -117,7 +118,7 @@ class App extends React.Component {
 
   	const getModalContent = (keyword) => {
   		if(keyword === "rules") {
-  			return <p>these are the rules</p>
+  			return <p>Ultimate Tic Tac Toe is a game that places a 9 total local tic tac toe boards inside each space of a grand tic tac toe board.  As you can probably guess, you claim a large space by winning a local board.  However, whenever you make a move on a local board's position, that will be the position of the grand board your opponent gets to make next.  Think twice about choosing the strong middle space, it will only assist your opponent in claiming that same space of the larger board that really matters.  Beware that once per game, there will be a space that sends your opponent to a local board that's completely full, (s)he will get to make the next move wherever (s)he'd like.  Good luck!</p>
   		}
   		if(keyword === "onlineForm") {
   			 return <form method="post" onSubmit={this.submitOnlineGameForm.bind(this)}>
