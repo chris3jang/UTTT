@@ -16,7 +16,9 @@ class App extends React.Component {
 	state = {
 		hasGameStarted: false,
 		gameSettings: "three",
+
 		modal: null,
+
 		onlineRoomCreateDirections: 'createGame',
 		roomID: null,
 		player: null,
@@ -32,14 +34,14 @@ class App extends React.Component {
 			console.log('@', data.name)
 			let temp = this.state.player
 			temp[0] = 1
-	  		self.setState({ onlineRoomCreateDirections: 'joinGame', player: temp, playerNum: 1, roomID: data.room})
+	  		self.setState({ modal: 'onlineWait', player: temp, playerNum: 1, roomID: data.room }, console.log("self", self.state.modal))
 
 		});
 
 		socket.on('player1', data => {
 			console.log('*')
 			let temp = this.state.player
-			temp[2] = data.player2Name
+			temp[2] = data.opponentName
 			self.setState({ player: temp, hasGameStarted: true, modal: null})
 		})
 
@@ -47,7 +49,7 @@ class App extends React.Component {
 			console.log('&')
 			let temp = this.state.player
 			temp[0] = 2
-			temp[2] = data.player2Name
+			temp[2] = data.opponentName
 			self.setState({hasGameStarted: true, player: temp, playerNum: 2, modal: null})
 		})
 
@@ -58,7 +60,7 @@ class App extends React.Component {
 		
 		socket.on('opponentExited', data => {
 			console.log("step 3")
-			self.setState({hasGameStarted: false, exitGame: true, roomID: null, player: null, turnPlayedData: null});
+			self.setState({hasGameStarted: false, exitGame: true, roomID: null, player: null, turnPlayedData: null, modal: "resignation"});
 		})
 	}
 
@@ -69,7 +71,7 @@ class App extends React.Component {
 		const {gameSettings, hasGameStarted} = this.state
 		if(action === 'one' || action === 'three' || action === 'magic') this.setState({gameSettings: action})
 		if(action === 'local') this.setState({hasGameStarted: true});
-		if(action === 'online') this.setState({modal: "online", roomID: true});
+		if(action === 'online') this.setState({modal: "onlineForm", roomID: true});
 		if(action === 'exit') {
 			if(this.state.roomID !== null) {
 				console.log("step 1")
@@ -114,7 +116,37 @@ class App extends React.Component {
 
   	const {hasGameStarted, modal, gameSettings, onlineRoomCreateDirections} = this.state
 
+  	const getModalContent = (keyword) => {
+  		if(keyword === "rules") {
+  			return <p>these are the rules</p>
+  		}
+  		if(keyword === "onlineForm") {
+  			 return <form method="post" onSubmit={this.submitOnlineGameForm.bind(this)}>
+						<div className="form-group">
+							<p>Start a new game</p>
+							<input type="text" name="playername" placeholder="name"></input>
+						</div>
+						<div className="form-group">
+							<p>Join an existing game</p>
+							<input type="text" name="gameid" placeholder="gameid"></input>
+						</div>
+						<div>
+							<button type="submit">Submit</button>
+						</div>
+					</form>
+  		}
+  		if(keyword === "onlineWait") {
+  			 return <p>Please ask your friend to enter Game ID: 
+		    		{this.state.roomID}. Waiting for player 2...'</p>
+  		}
+  		if(keyword === "resignation") {
+  			return <p>Your opponent resigned.</p>
+  		}
+  	}
 
+  	const getModalHeader = () => {
+  		
+  	}
 
   	let directionsBody
   	if(onlineRoomCreateDirections == 'createGame') {
@@ -151,7 +183,7 @@ class App extends React.Component {
       			show={modal} 
       			handleClose={this.closeModal.bind(this)} 
       			headerText={modal === "rules" ? "Rules" : "Online Form"}>
-      			{modal === "rules" ? <p>these are the rules</p> : directionsBody }
+      			{modal !== null ? getModalContent(this.state.modal) : null}
       		</Modal>
         	<Game 
         		newGameHasStarted={hasGameStarted}

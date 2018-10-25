@@ -7,6 +7,22 @@ const path = require('path')
 
 let rooms = 0, player1Name, player2Name;
 
+const occupiedRooms = {
+}
+
+const generateRoomName = () => {
+	let name = "";
+	const letters = "abcdefghijklmnopqrstuvwxyz";
+	const numbers = "0123456789";
+	for(let i = 0; i < 4; i++) {
+		name += letters.charAt(Math.floor(Math.random() * letters.length));
+	}
+	for(let j = 0; j < 4; j++) {
+		name += numbers.charAt(Math.floor(Math.random() * numbers.length));
+	}
+	return name;
+}
+
 app.use(express.static(path.join(__dirname, 'build')));
 
 app.get('/ping', function (req, res) {
@@ -25,22 +41,29 @@ io.on('connection', function(socket){
 	  //do something with data
 	  console.log('CREATEGAMEONLINE data', data)
 	  player1Name = data.name;
-	  socket.join('room-' + ++rooms);
-	  socket.emit('newGameCreated', {name: data.name, room: 'room-'+rooms});
+	  const roomName = generateRoomName()
+	  occupiedRooms[roomName] = [data.name]
+	  //socket.join('room-' + ++rooms);
+	  //socket.emit('newGameCreated', {name: data.name, room: 'room-'+rooms});
+
+	  socket.join(roomName);
+	  socket.emit('newGameCreated', {name: data.name, room: roomName});
 	});
 
 	/**
 	 * Connect the Player 2 to the room he requested. Show error if room full.
 	 */
 	socket.on('joinExistingGame', function(data){
-		socket.emit('newGameCreated', {name: data.name, room: 'room-'+rooms});
+		occupiedRooms[data.room][1] = data.name
+		socket.emit('newGameCreated', {name: data.name, room: data.room});
 	  var room = io.nsps['/'].adapter.rooms[data.room];
 	  if( room && room.length == 1){
 	    socket.join(data.room);
-	    console.log("PLAYER1", data)
-	    socket.broadcast.to(data.room).emit('player1', {player2Name: data.name});
-	    console.log("PLAYER2", data.name)
-	    socket.emit('player2', {player2Name: player1Name, room: data.room })
+	    //console.log("PLAYER1", data)
+	    //occupiedRooms[]
+	    socket.broadcast.to(data.room).emit('player1', {opponentName: data.name});
+	    //console.log("PLAYER2", data.name)
+	    socket.emit('player2', {opponentName: occupiedRooms[data.room][0], room: data.room })
 	  }
 	  else {
 	    socket.emit('err', {message: 'Sorry, The room is full!'});
@@ -67,8 +90,8 @@ io.on('connection', function(socket){
 	socket.on('exitGame', function(data) {
 	  console.log("step 2", data.room)
 	  socket.to(data.room).emit('opponentExited', data)
-	  socket.broadcast.to(data.room).emit('opponentExited', data)
-	  socket.emit('opponentExited', data)
+	  //socket.broadcast.to(data.room).emit('opponentExited', data)
+	  //socket.emit('opponentExited', data)
 	});
 
 });

@@ -36,11 +36,14 @@ class Game extends Component {
       waitingForTurn: null,
       tileHovered: [null, null],
       gameWon: false,
-      victoryMessage: false
+      message: null
     });
   };
 
   componentWillReceiveProps(nextProps) {
+    if(nextProps.exitGame) {
+      this.setState({gameWon: true})
+    }
     if(this.props.newGameHasStarted != nextProps.newGameHasStarted) {
       if(nextProps.newGameHasStarted) {
         this.setState({turn: '✕', availableBoard: 9});
@@ -178,7 +181,7 @@ class Game extends Component {
 
       let finalTransition = this.state.boardData
       finalTransition[11][squareClicked[0]] = true
-      this.setState({gameWon: true, victoryMessage: true, boardData: finalTransition});
+      this.setState({gameWon: true, message: "YOU WON", boardData: finalTransition});
       return true;
     }
     else return false;
@@ -211,7 +214,7 @@ class Game extends Component {
   }
 
   removeVictoryMessage() {
-    this.setState({victoryMessage: false})
+    this.setState({message: null})
   }
 
   render() {
@@ -242,8 +245,8 @@ class Game extends Component {
           <div className={getTurnClassName('Left')}>✕</div>
           <div className={getTurnClassName('Right')}>◯</div>
         </div>
-        <div className={"victoryContainer"}>
-          <div className={this.state.victoryMessage ? "victoryMessage": "victoryEmpty"} onClick={this.removeVictoryMessage.bind(this)}>YOU WON</div>
+        <div className={"messageContainer"}>
+          <div className={this.state.message ? "messageVisible": "messageHidden"} onClick={this.removeVictoryMessage.bind(this)}>{this.state.message}</div>
         </div>
         <TTT 
           newGameHasStarted={newGameHasStarted}

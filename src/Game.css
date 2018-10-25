@@ -98,13 +98,24 @@
 	color: grey;
 }
 
-.victoryContainer {
+.messageContainer {
 	position: absolute;
 	left: 50%;
 	line-height: 450px;
 }
 
-.victoryEmpty {
+.message {
+	position: relative;
+	height: 498px;
+	width: 498px;
+	line-height: 450px;
+	background: white;
+	left: -50%;
+	border-radius: 10px;
+	text-align: center;
+}
+
+.messageHidden {
 	position: relative;
 	height: 498px;
 	width: 498px;
@@ -119,7 +130,7 @@
 	transition: none;
 }
 
-.victoryMessage {
+.messageVisible {
 
 	position: relative;
 	height: 498px;
