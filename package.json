@@ -14,8 +14,6 @@
     "react-scripts": "0.9.5"
   },
   "scripts": {
-  	"postinstall": "npm run build",
-  	"server": "node index.js",
     "start": "node index.js",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
