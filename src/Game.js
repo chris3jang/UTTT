@@ -61,7 +61,6 @@ class Game extends Component {
       }
     }
     if(this.props.playerNum !== nextProps.playerNum) {
-      console.log("HERE", this.props.playerNum, nextProps.playerNum)
       if(nextProps.playerNum === 1) {
         this.setState({waitingForTurn: false, room: this.props.roomID});
       }

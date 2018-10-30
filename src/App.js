@@ -30,22 +30,19 @@ class App extends React.Component {
 	componentDidMount() {
 		const self = this
 		socket.on('newGameCreated', data => {
-			console.log('@', data.name)
 			let temp = this.state.player
 			temp[0] = 1
-	  		self.setState({ modal: 'onlineWait', player: temp, playerNum: 1, roomID: data.room }, console.log("self", self.state.modal))
+	  		self.setState({ modal: 'onlineWait', player: temp, playerNum: 1, roomID: data.room })
 
 		});
 
 		socket.on('player1', data => {
-			console.log('*')
 			let temp = this.state.player
 			temp[2] = data.opponentName
 			self.setState({ player: temp, hasGameStarted: true, modal: null})
 		})
 
 		socket.on('player2', data => {
-			console.log('&')
 			let temp = this.state.player
 			temp[0] = 2
 			temp[2] = data.opponentName

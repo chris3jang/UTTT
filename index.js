@@ -1,19 +1,21 @@
 const express = require('express');
 const app = express();
 const server = require('http').Server(app)
+//server.listen(process.env.PORT || 8080)
 
 const io = require('socket.io')(server)
-
-server.listen(process.env.PORT || 8080)
+//const io = socketIO(app)
 
 const path = require('path')
 
-//server.listen(process.env.PORT || 8080, () => {console.log("index.js is running")});
+server.listen(process.env.PORT || 8080, () => {console.log("index.js is running")});
 
 let rooms = 0, player1Name, player2Name;
 
 const occupiedRooms = {
 }
+
+
 
 const generateRoomName = () => {
 	let name = "";
@@ -95,5 +97,6 @@ io.on('connection', function(socket){
 	  //socket.emit('opponentExited', data)
 	});
 
+	socket.on('disconnect', () => console.log('Client disconnected'));
 });
 
