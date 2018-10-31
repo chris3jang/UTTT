@@ -8,7 +8,7 @@ import './TTT.css';
 
 
 import openSocket from 'socket.io-client';
-const socket = openSocket('http://localhost:8080');
+const socket = openSocket('https://ulttitato.herokuapp.com/');
 
 class App extends React.Component {
 
