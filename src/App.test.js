@@ -5,34 +5,35 @@ import Game from './Game';
 
 import { mount, shallow } from 'enzyme';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
+const props = {
+  hasGameStarted: false,
+  gameSettings: "three",
+  modal: null,
+  onlineRoomCreateDirections: 'createGame',
+  roomID: null,
+  player: null,
+  playerNum: null,
+  turnPlayedData: null,
+  exitGame: null
+}
+
+const wrapper = mount(<App {...props} />);
+it('default', () => {
+  expect(wrapper.find(Game).props().newGameHasStarted).toBe(false);
 });
 
-it('renders without crashing smoketest', () => {
-  shallow(<App />);
+describe('nav to game', () => {
+
+  it('local', () => {
+    wrapper.instance().selectMenuOption("local");
+    wrapper.update();
+    expect(wrapper.find(Game).props().newGameHasStarted).toBe(true);
+    wrapper.setProps({props});
+  });
+
+  it('exit', () => {
+    wrapper.setProps({newGameHasStarted: true});
+    wrapper.instance().selectMenuOption("exit");
+
+  });
 });
-
-it('can render <h1> in App component', () => {
-	const wrapper = shallow(<App />)
-	expect(wrapper.childAt(1).type()).toBe('div')
-})
-
-it('can set todos state in App component and count state number', () => {
-    const wrapper = shallow(<App />)
-    expect(wrapper.state('hasGameStarted')).toBe(false)
-  })
-
-it('can render <Todos> in App component', () => {
-    const wrapper = mount(<App />)
-    expect(wrapper.find(Game).type()).toBe(Game)
-  })
-
-/*
-it('can render <Todos> in App component and set custom state in it and count number', () => {
-    const wrapper = mount(<App />)
-    //wrapper.setState({ todos: custom_todos })
-    expect(wrapper.find(Todos).prop('todos').length).toBe(2)
-  })
-*/

@@ -1,45 +1,12 @@
 import React, { Component } from 'react';
 import './TTT.css';
 import Square from './Square.js';
+import WinMark from './WinMark.js'
 
 //class TTT extends Component {
 
 const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard, 
       boardData, boardNumber, listenForMove, listenForHover, completeTransition, gameWon }) => {
-
-    const largeTileWon = (isBoardSet ? (boardData[9][boardNumber] !== ' ') : null)
-
-
-    const getWinID = () => {
-      let temp, id = ""
-      if(isBoardSet) temp = boardNumber
-      else temp = 9
-      for(let i = 0; i < 3; i++) {
-        id += boardData[10][temp][i];
-      }
-      return id
-    }
-
-    const getWinEl = (id) => {
-      const winDim = {
-        "012": "M10 29 L152 29",
-        "345": "M10 81 L152 81",
-        "678": "M10 133 L152 133",
-        "036": "M29 10 L29 152",
-        "147": "M81 10 L81 152",
-        "258": "M132 10 L132 152",
-        "048": "M10 10 L152 152" ,
-        "246": "M10 152 L152 10"
-      };
-      const cN = (isBoardSet ? "smallPath" : "bigPath") + (boardData[10][9].includes(tileHovered[0]) && gameWon ? " hidden" : "")
-      let temp
-      if(isBoardSet) temp = boardNumber
-      else temp = 9
-      if((boardData[9][temp] !== ' ' && temp !== 9) || (temp === 9 && gameWon)) {
-        return <path d={winDim[id]} stroke="#000000" stroke-width="5" className={cN}></path>
-      }
-      else return
-    }
 
     const getTileClassName = (r, s) => {
       let classnames = "";
@@ -92,7 +59,7 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
       if(newGameHasStarted) {
         if(isBoardSet) {
           if([boardNumber, 9].includes(availableBoard) && boardData[boardNumber][number] === ' ') {
-            listenForHover(number, "innerhover")
+            listenForHover(number, "inner")
           }
         }
         else {
@@ -105,7 +72,7 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
       if(newGameHasStarted) {
         if(isBoardSet) {
           if([boardNumber, 9].includes(availableBoard) && boardData[boardNumber][number] === ' ') {
-            listenForHover(availableBoard, "innerout")
+            listenForHover(availableBoard, "inner")
           }
         }
         else {
@@ -114,7 +81,9 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
       }
     }
 
-
+    const isBoardActive = (num) => {
+      return ((availableBoard === boardNumber || availableBoard === 9 ) && boardData[boardNumber][num] === ' ' && newGameHasStarted && !gameWon);
+    }
 
 
     const renderBoard = (content) => {
@@ -146,11 +115,8 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
           <Square
             position={[boardNumber, 3*r+s]} 
             listenForMove={listenForMove} 
-            listenForHover={listenForHover}
             content={boardData[boardNumber][3*r+s]}
-            availableBoard={availableBoard}
-            newGameHasStarted={newGameHasStarted}
-            gameWon={gameWon}>
+            isActive={isBoardActive(3*r+s)}>
           </Square>
         );
       }
@@ -166,7 +132,6 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
               availableBoard={availableBoard}
               newGameHasStarted={newGameHasStarted}
               tileHovered={tileHovered}
-              boardData={boardData}
               completeTransition={completeTransition}
               gameWon={gameWon}>
             </TTT>
@@ -188,15 +153,14 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
             createBoard(row, space, isBoardSet)
           )}
         </div>
-        {(!isBoardSet ? boardData[10][9] : boardData[10][boardNumber]) &&
-          <div className={isBoardSet ? getChangingClassName(boardNumber, "wm") : "bigWinMark"}>
-            <svg className={isBoardSet ? "svgclass" : "bigSvgClass"}>
-              <g transform={"scale(" + (isBoardSet ? 1 : 3.1) + ")"}>
-                {getWinEl(getWinID())}
-              </g>
-            </svg>
-          </div>
-        }
+        <WinMark
+          isBoardSet={isBoardSet}
+          boardWinner={boardData[9][boardNumber]} 
+          finalBoardWinPositions={boardData[10][9]}
+          winID={boardData[10][(isBoardSet ? boardNumber : 9)].join('').toString()}
+          tileHovered={tileHovered}  
+          changedClassName={getChangingClassName(boardNumber, "wm")}>
+        </WinMark>
       </div>
       
     );

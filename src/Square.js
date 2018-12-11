@@ -1,32 +1,13 @@
 import React, { Component } from 'react';
 import './Square.css';
 
-const Square = ({content, position, availableBoard, newGameHasStarted, listenForMove, listenForHover, gameWon}) => {
-
-  const isActiveBoard = (((position[0] === availableBoard || (availableBoard === 9 && newGameHasStarted)) && content === " ") && !gameWon);
+const Square = ({isActive, listenForMove, position, content}) => {
   
   const handleClick = () => {
-    if(isActiveBoard) {
+    if(isActive) {
       listenForMove(position);
     }
   };
-
-  /*
-  const handleMouseOver = () => {
-    if(isActiveBoard) {
-      listenForHover(position[1], "innerhover");
-    }
-  };
-
-  const handleMouseOut = () => {
-    if(isActiveBoard) {
-      listenForHover(availableBoard, "innerout")
-    }
-  };
-
-  onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}
-
-  */
 
   return (
     <button className="button" onClick={handleClick}>

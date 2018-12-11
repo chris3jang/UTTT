@@ -15,15 +15,12 @@ class App extends React.Component {
 	state = {
 		hasGameStarted: false,
 		gameSettings: "three",
-
 		modal: null,
-
 		onlineRoomCreateDirections: 'createGame',
 		roomID: null,
 		player: null,
 		playerNum: null,
 		turnPlayedData: null,
-
 		exitGame: null
 	}
 
@@ -63,7 +60,6 @@ class App extends React.Component {
 
 
 	selectMenuOption(action) {
-		console.log("selected")
 		const {gameSettings, hasGameStarted} = this.state
 		//if(action === 'one' || action === 'three' || action === 'magic') this.setState({gameSettings: action})
 		if(action === 'local') this.setState({hasGameStarted: true});
@@ -81,7 +77,6 @@ class App extends React.Component {
 
 	closeModal() {
 		const {modal} = this.state
-
 		this.setState({modal: null, roomID: null, player: null, turnPlayedData: null});
 	}
 
@@ -185,7 +180,6 @@ class App extends React.Component {
         	<Game 
         		newGameHasStarted={hasGameStarted}
         		gameSettings={gameSettings}
-        		online={this.state.online}
         		player={this.state.player}
         		playerNum={this.state.playerNum}
         		roomID={this.state.roomID}

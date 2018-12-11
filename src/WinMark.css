@@ -1,0 +1,84 @@
+.winMark {
+	position: absolute;
+	height: 162px;
+	width: 162px;
+	line-height: 162px;
+	font-size: 150px;
+	z-index: -2;
+	text-align: center;
+	top: 0;
+	left: 0;
+}
+
+.visible {
+	opacity: 1;
+}
+
+.instant {
+	transition: none;
+}
+
+.outerTileWinTrans {
+	transition-property: opacity;
+    transition-duration: 2s;
+    transition-delay: 4s;
+}
+
+.svgclass {
+	height: 100%;
+	width: 100%;
+}
+
+.bigWinMark {
+	position: absolute;
+	height: 504px;
+	width: 504px;
+	line-height: 504px;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	z-index: -2;
+}
+
+.bigSvgClass {
+	height: 100%;
+	width: 100%;
+}
+
+
+.hidden {
+	opacity: 0;
+}
+
+.smallPath {
+	stroke-dasharray: 1000;
+	stroke-dashoffset: 1000;
+	stroke-width: 3;
+	animation: smallDash 5s linear forwards;
+}
+
+.bigPath {
+	stroke-dasharray: 3000;
+	stroke-dashoffset: 3000;
+	stroke-width: 3;
+	animation: bigDash 15s linear forwards;
+}
+
+@keyframes smallDash {
+	from {
+		stroke-dashoffset: 1000;
+	}
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+@keyframes bigDash {
+	from {
+		stroke-dashoffset: 3000;
+	}
+	to {
+		stroke-dashoffset: 0;
+	}
+}

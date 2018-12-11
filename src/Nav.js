@@ -3,8 +3,6 @@ import './Nav.css';
 
 const Nav = ({selectMenuOption, gameSettings}) => {
 
-
-
 	const clickMenuOption = (action) => {
 		selectMenuOption(action);
 	}

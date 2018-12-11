@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import TTT from './TTT';
+import TurnCounter from './TurnCounter.js';
 import './Game.css';
 
 import openSocket from 'socket.io-client';
@@ -29,7 +30,7 @@ class Game extends Component {
         [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
         [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
         [ " ", " ", " ", " ", " ", " ", " ", " ", " " ],
-        [ " ", " ", " ", " ", " ", " ", " ", " ", " ", " " ],
+        [ [], [], [], [], [], [], [], [], [], [] ],
         [ null, null, null, null, null, null, null, null, null ] //check if [9] is the same thing
       ],
       availableBoard: 9,
@@ -78,14 +79,12 @@ class Game extends Component {
   };
 
   checkForMagicBox(board) {
-    for(var i=0; i<9; i++) {
+    for(let i=0; i<9; i++) {
       if(this.state.boardData[board][i] === " ") {
         return false;
       }
-      else if(i === 8) {
-        return true;
-      }
     }
+    return true;
   };
 
   handleMove(squareClicked) {
@@ -111,10 +110,13 @@ class Game extends Component {
     let won;
     const {turn, boardData, availableBoard} = this.state;
     const outerboard = squareClicked[0], innerboard = squareClicked[1], currentBoard = boardData[outerboard];
+    const currentTurn = turn
+
     boardData[outerboard][innerboard] = turn;
     this.setState({turn: (turn === '✕' ? '◯' : '✕'), boardData});
+    
     if(boardData[9][outerboard] === ' ') {
-      this.didWin(currentBoard, squareClicked);
+      this.didWin(currentBoard, squareClicked, currentTurn);
       won = this.didWinGame(squareClicked);
     }
 
@@ -140,30 +142,21 @@ class Game extends Component {
     return false;
   };
 
-  markWin(boardNum, winCondition) {
-    let updatedWins = this.state.boardData;
-    let id = "";
-    for(let i = 0; i < 3; i++) {
-      id += winCondition[i];
-    }
-    updatedWins[10][boardNum] = id;
-    this.setState({boardData: updatedWins});
-  }
-
-  didWin(board, squareClicked) {
+  didWin(board, squareClicked, currentTurn) {
     const {turn, boardData} = this.state;
     const mark = this.didWinBoard(board), outerboard = squareClicked[0];
     if(mark) {
-      //this.markWin(outerboard, mark);
-      //
-      let updatedWins = this.state.boardData;
-      updatedWins[10][outerboard] = mark
-      this.setState({boardData: updatedWins})
+      let updatedBoard = this.state.boardData;
+      updatedBoard[10][outerboard] = mark
+      this.setState({boardData: updatedBoard})
       //
       if(boardData[9][outerboard]) {
-        boardData[9][outerboard] = turn;
+        console.log(currentTurn)
+        updatedBoard[9][outerboard] = currentTurn;
 
-        this.state.boardData[11][outerboard] = false;
+        updatedBoard[11][outerboard] = false;
+        this.setState({boardData: updatedBoard})
+
       }
       if(this.props.gameSettings === "one") {
         //this.wonGame();
@@ -180,7 +173,7 @@ class Game extends Component {
 
       let finalTransition = this.state.boardData
       finalTransition[11][squareClicked[0]] = true
-      this.setState({gameWon: true, message: "YOU WON", boardData: finalTransition});
+      this.setState({newGameHasStarted: false, gameWon: true, message: "YOU WON", boardData: finalTransition});
       return true;
     }
     else return false;
@@ -191,17 +184,13 @@ class Game extends Component {
     if(action === "outer") {
       temp[0] = squareHovered
     }
-    if(action === "innerhover" || action === "innerout") {
+    if(action === "inner") {
       if(this.props.roomID !== null && this.state.waitingForTurn){
         temp[1] = 9
       }
       else temp[1] = squareHovered
     }
-    
     this.setState({tileHovered: temp})
-    /*
-    if(action === "innerout") this.completeTransition(squareHovered)
-      */
   }
 
   completeTransition(pos) {
@@ -236,14 +225,14 @@ class Game extends Component {
 
     return (
       <div className="game">
-        <div className={newGameHasStarted && !gameWon ? "counterContainer" : "gameNotInPlay"}>
-          <div className={"nameContainer" + (this.props.roomID === null ? " removed" : "")}>
-            <div className={"left"}>{this.props.player ? (this.props.player[0] === 1 ? this.props.player[1] : (this.props.player[0] === 2 ? this.props.player[2] : null)) : null}</div>
-            <div className={"right"}>{this.props.player ? (this.props.player[0] === 1 ? this.props.player[2] : (this.props.player[0] === 2 ? this.props.player[1] : null)) : null}</div>
-          </div>
-          <div className={getTurnClassName('Left')}>✕</div>
-          <div className={getTurnClassName('Right')}>◯</div>
-        </div>
+        <TurnCounter
+          newGameHasStarted={newGameHasStarted}
+          gameWon={gameWon}
+          roomID={this.props.roomID}
+          player={this.props.player}
+          left={getTurnClassName('Left')}
+          right={getTurnClassName('Right')}>
+        </TurnCounter>
         <div className={"messageContainer"}>
           <div className={this.state.message ? "messageVisible": "messageHidden"} onClick={this.removeVictoryMessage.bind(this)}>{this.state.message}</div>
         </div>
