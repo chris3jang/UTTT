@@ -13,15 +13,14 @@ const socket = openSocket('https://ulttitato.herokuapp.com/');
 class App extends React.Component {
 
 	state = {
-		hasGameStarted: false,
+		isGameActive: false,
 		gameSettings: "three",
 		modal: null,
 		onlineRoomCreateDirections: 'createGame',
 		roomID: null,
 		player: null,
 		playerNum: null,
-		turnPlayedData: null,
-		exitGame: null
+		turnPlayedData: null
 	}
 
 	componentDidMount() {
@@ -36,14 +35,14 @@ class App extends React.Component {
 		socket.on('player1', data => {
 			let temp = this.state.player
 			temp[2] = data.opponentName
-			self.setState({ player: temp, hasGameStarted: true, modal: null})
+			self.setState({ player: temp, isGameActive: true, modal: null})
 		})
 
 		socket.on('player2', data => {
 			let temp = this.state.player
 			temp[0] = 2
 			temp[2] = data.opponentName
-			self.setState({hasGameStarted: true, player: temp, playerNum: 2, modal: null})
+			self.setState({isGameActive: true, player: temp, playerNum: 2, modal: null})
 		})
 
 		//figure out how to make this work inside child component
@@ -53,23 +52,23 @@ class App extends React.Component {
 		
 		socket.on('opponentExited', data => {
 			console.log("step 3")
-			self.setState({hasGameStarted: false, exitGame: true, roomID: null, player: null, turnPlayedData: null, modal: "resignation"});
+			self.setState({isGameActive: false, roomID: null, player: null, turnPlayedData: null, modal: "resignation"});
 		})
 	}
 
 
 
 	selectMenuOption(action) {
-		const {gameSettings, hasGameStarted} = this.state
+		const {gameSettings, isGameActive} = this.state
 		//if(action === 'one' || action === 'three' || action === 'magic') this.setState({gameSettings: action})
-		if(action === 'local') this.setState({hasGameStarted: true});
+		if(action === 'local') this.setState({isGameActive: true});
 		if(action === 'online') this.setState({modal: "onlineForm", roomID: true});
 		if(action === 'exit') {
 			if(this.state.roomID !== null) {
 				console.log("step 1")
 				socket.emit('exitGame', {room: this.state.roomID})
 			}
-			this.setState({hasGameStarted: false, exitGame: true, roomID: null, player: null, turnPlayedData: null});
+			this.setState({isGameActive: false, roomID: null, player: null, playerNum: null, turnPlayedData: null});
 		}
 		if(action === 'rules') this.setState({modal: "rules"});
 	}
@@ -106,7 +105,7 @@ class App extends React.Component {
 
   render() {
 
-  	const {hasGameStarted, modal, gameSettings, onlineRoomCreateDirections} = this.state
+  	const {isGameActive, modal, gameSettings, onlineRoomCreateDirections} = this.state
 
   	const getModalContent = (keyword) => {
   		if(keyword === "rules") {
@@ -178,13 +177,12 @@ class App extends React.Component {
       			{modal !== null ? getModalContent(this.state.modal) : null}
       		</Modal>
         	<Game 
-        		newGameHasStarted={hasGameStarted}
+        		newGameHasStarted={isGameActive}
         		gameSettings={gameSettings}
         		player={this.state.player}
         		playerNum={this.state.playerNum}
         		roomID={this.state.roomID}
-        		turnPlayedData={this.state.turnPlayedData}
-        		exitGame = {this.state.exitGame}>
+        		turnPlayedData={this.state.turnPlayedData}>
         	</Game>
       	</div>
     );

@@ -4,9 +4,10 @@ import App from './App';
 import Game from './Game';
 
 import { mount, shallow } from 'enzyme';
+import renderer from 'react-test-renderer';
 
 const props = {
-  hasGameStarted: false,
+  isGameActive: false,
   gameSettings: "three",
   modal: null,
   onlineRoomCreateDirections: 'createGame',
@@ -22,6 +23,23 @@ it('default', () => {
   expect(wrapper.find(Game).props().newGameHasStarted).toBe(false);
 });
 
+it('snapshot', () => {
+  const tree = renderer.create(
+        <App
+          {...props}>
+        </App>).toJSON();
+      expect(tree).toMatchSnapshot();
+})
+
+it('snapshot after game in play', () => {
+  wrapper.setProps({isGameActive: true})
+  const tree = renderer.create(
+        <App
+          {...props}>
+        </App>).toJSON();
+      expect(tree).toMatchSnapshot();
+})
+
 describe('nav to game', () => {
 
   it('local', () => {
@@ -32,8 +50,18 @@ describe('nav to game', () => {
   });
 
   it('exit', () => {
-    wrapper.setProps({newGameHasStarted: true});
+    wrapper.setProps({isGameActive: true});
+    expect(wrapper.find(Game).props().newGameHasStarted).toBe(true);
     wrapper.instance().selectMenuOption("exit");
-
+    wrapper.update();
+    expect(wrapper.find(Game).props().newGameHasStarted).toBe(false);
   });
+
+  it('rules', () => {
+    wrapper.instance().selectMenuOption("rules");
+    wrapper.update();
+  })
+  
+
+
 });

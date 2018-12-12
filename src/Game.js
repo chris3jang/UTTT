@@ -42,9 +42,6 @@ class Game extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.exitGame) {
-      this.setState({gameWon: true})
-    }
     if(this.props.newGameHasStarted != nextProps.newGameHasStarted) {
       if(nextProps.newGameHasStarted) {
         this.setState({turn: '✕', availableBoard: 9});
@@ -173,7 +170,7 @@ class Game extends Component {
 
       let finalTransition = this.state.boardData
       finalTransition[11][squareClicked[0]] = true
-      this.setState({newGameHasStarted: false, gameWon: true, message: "YOU WON", boardData: finalTransition});
+      this.setState({gameWon: true, message: "YOU WON", boardData: finalTransition});
       return true;
     }
     else return false;
