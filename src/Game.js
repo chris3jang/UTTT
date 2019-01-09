@@ -42,8 +42,8 @@ class Game extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    if(this.props.newGameHasStarted != nextProps.newGameHasStarted) {
-      if(nextProps.newGameHasStarted) {
+    if(this.props.isGameActive != nextProps.isGameActive) {
+      if(nextProps.isGameActive) {
         this.setState({turn: '✕', availableBoard: 9});
       }
       else {
@@ -114,7 +114,7 @@ class Game extends Component {
     
     if(boardData[9][outerboard] === ' ') {
       this.didWin(currentBoard, squareClicked, currentTurn);
-      won = this.didWinGame(squareClicked);
+      won = this.didWinGame(squareClicked, currentTurn);
     }
 
     let next;
@@ -161,7 +161,7 @@ class Game extends Component {
     }
   }
 
-  didWinGame(squareClicked) {
+  didWinGame(squareClicked, currentTurn) {
     const mark = this.didWinBoard(this.state.boardData[9])
     if(mark){
       let updatedWins = this.state.boardData;
@@ -170,7 +170,7 @@ class Game extends Component {
 
       let finalTransition = this.state.boardData
       finalTransition[11][squareClicked[0]] = true
-      this.setState({gameWon: true, message: "YOU WON", boardData: finalTransition});
+      this.setState({gameWon: true, message: currentTurn + " WINS", boardData: finalTransition});
       return true;
     }
     else return false;
@@ -191,7 +191,7 @@ class Game extends Component {
   }
 
   completeTransition(pos) {
-    if(this.props.newGameHasStarted) {
+    if(this.props.isGameActive) {
       let editedBoardData = this.state.boardData;
       editedBoardData[11][pos] = true;
       this.setState({boardData: editedBoardData});
@@ -204,7 +204,7 @@ class Game extends Component {
 
   render() {
     const {turn, boardData, availableBoard, winIDs, tileHovered, gameWon} = this.state;
-    const {player, newGameHasStarted} = this.props;
+    const {player, isGameActive} = this.props;
 
     const getTurnClassName = (side) => {
       let className = "turn" + side;
@@ -223,7 +223,7 @@ class Game extends Component {
     return (
       <div className="game">
         <TurnCounter
-          newGameHasStarted={newGameHasStarted}
+          isGameActive={isGameActive}
           gameWon={gameWon}
           roomID={this.props.roomID}
           player={this.props.player}
@@ -234,7 +234,7 @@ class Game extends Component {
           <div className={this.state.message ? "messageVisible": "messageHidden"} onClick={this.removeVictoryMessage.bind(this)}>{this.state.message}</div>
         </div>
         <TTT 
-          newGameHasStarted={newGameHasStarted}
+          isGameActive={isGameActive}
           isBoardSet={false}
           boardData={this.state.boardData}
           completeTransition={this.completeTransition.bind(this)}

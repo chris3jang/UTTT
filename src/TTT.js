@@ -5,7 +5,7 @@ import WinMark from './WinMark.js'
 
 //class TTT extends Component {
 
-const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard, 
+const TTT = ({ isBoardSet, isGameActive, tileHovered, availableBoard, 
       boardData, boardNumber, listenForMove, listenForHover, completeTransition, gameWon }) => {
 
     const getTileClassName = (r, s) => {
@@ -19,7 +19,7 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
     }
 
     const showBackgroundColor = (num) => {
-      return (!gameWon && newGameHasStarted && ([num, 9].includes(availableBoard) || tileHovered[1] === num));
+      return (!gameWon && isGameActive && ([num, 9].includes(availableBoard) || tileHovered[1] === num));
     }
 
     const getChangingClassName = (num, el) => {
@@ -56,7 +56,7 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
     }
 
     const hoverOn = (number) => {
-      if(newGameHasStarted) {
+      if(isGameActive) {
         if(isBoardSet) {
           if([boardNumber, 9].includes(availableBoard) && boardData[boardNumber][number] === ' ') {
             listenForHover(number, "inner")
@@ -69,7 +69,7 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
     }
 
     const hoverOff = (number) => {
-      if(newGameHasStarted) {
+      if(isGameActive) {
         if(isBoardSet) {
           if([boardNumber, 9].includes(availableBoard) && boardData[boardNumber][number] === ' ') {
             listenForHover(availableBoard, "inner")
@@ -82,7 +82,7 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
     }
 
     const isBoardActive = (num) => {
-      return ((availableBoard === boardNumber || availableBoard === 9 ) && boardData[boardNumber][num] === ' ' && newGameHasStarted && !gameWon);
+      return ((availableBoard === boardNumber || availableBoard === 9 ) && boardData[boardNumber][num] === ' ' && isGameActive && !gameWon);
     }
 
 
@@ -130,7 +130,7 @@ const TTT = ({ isBoardSet, newGameHasStarted, tileHovered, availableBoard,
               listenForHover={listenForHover}
               boardNumber={3*r+s}
               availableBoard={availableBoard}
-              newGameHasStarted={newGameHasStarted}
+              isGameActive={isGameActive}
               tileHovered={tileHovered}
               completeTransition={completeTransition}
               gameWon={gameWon}>
