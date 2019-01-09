@@ -23,5 +23,8 @@
     "eject": "react-scripts eject",
     "heroku-postbuild": "npm run build"
   },
-  "proxy": "http://localhost:8080"
+  "proxy": "http://localhost:8080",
+  "engines": {
+    "node": "8.11.4"
+  }
 }
