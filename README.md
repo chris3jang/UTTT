@@ -1,7 +1,5 @@
 # UltTiTaTo
-<p align="center">
-<img src="/public/uttt.png"  />
-</p>
+![Alt text](https://github.com/chris3jang/chris3jang.github.io/blob/master/static/uttt.png "Optional Title")
 
 ## Introduction
 Play 2 player Ultimate Tic Tac Toe directly in the browser on a single device or online with a friend.
