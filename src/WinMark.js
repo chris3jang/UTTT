@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './WinMark.css';
+import './css/WinMark.css';
 
 const WinMark = ({isBoardSet, boardWinner, finalBoardWinPositions, winID, tileHovered, changedClassName}) => {
 

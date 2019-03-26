@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './TurnCounter.css';
+import './css/TurnCounter.css';
 
 const TurnCounter = ({isGameActive, gameWon, roomID, player, left, right}) => {
   

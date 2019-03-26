@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import WinMark from './WinMark';
+import WinMark from '../WinMark';
 
 import renderer from 'react-test-renderer';
 

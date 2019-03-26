@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Modal from './Modal';
 import Game from './Game';
 import Nav from './Nav';
-import './App.css';
+import './css/App.css';
 
 import openSocket from 'socket.io-client';
 const socket = openSocket('https://ulttitato.herokuapp.com/');

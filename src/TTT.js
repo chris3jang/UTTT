@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './TTT.css';
+import './css/TTT.css';
 import Square from './Square.js';
 import WinMark from './WinMark.js'
 

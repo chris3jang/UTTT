@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TurnCounter from './TurnCounter';
+import TurnCounter from '../TurnCounter';
 
 import renderer from 'react-test-renderer';
 

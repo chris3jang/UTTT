@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import Game from './Game';
+import App from '../App';
+import Game from '../Game';
 
 import { mount, shallow } from 'enzyme';
 import renderer from 'react-test-renderer';

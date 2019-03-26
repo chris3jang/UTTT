@@ -1,0 +1,10 @@
+exports[`default <WinMark /> content accurately represents mark renders a snapshot 1`] = `
+<div
+  className="winMark">
+  <svg
+    className="svgclass">
+    <g
+      transform="scale(1)" />
+  </svg>
+</div>
+`;

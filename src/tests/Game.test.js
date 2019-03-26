@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TTT from './TTT.js';
-import WinMark from './WinMark.js';
-import Square from './Square.js';
-import TurnCounter from './TurnCounter.js';
-
-import Game from './Game.js';
+import TTT from '../TTT.js';
+import WinMark from '../WinMark.js';
+import Square from '../Square.js';
+import TurnCounter from '../TurnCounter.js';
+import Game from '../Game.js';
 
 import { mount, shallow } from 'enzyme';
 

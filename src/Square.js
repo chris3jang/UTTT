@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './Square.css';
+import './css/Square.css';
 
 const Square = ({isActive, listenForMove, position, content}) => {
   

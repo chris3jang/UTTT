@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './Nav.css';
+import './css/Nav.css';
 
 const Nav = ({selectMenuOption, gameSettings}) => {
 

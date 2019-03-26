@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Square from './Square';
+import Square from '../Square';
 
 import { mount, shallow } from 'enzyme';
 

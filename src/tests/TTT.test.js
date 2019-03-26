@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TTT from './TTT.js';
-import WinMark from './WinMark.js';
-import Square from './Square.js';
+import TTT from '../TTT.js';
+import WinMark from '../WinMark.js';
+import Square from '../Square.js';
 
 import { mount, shallow } from 'enzyme';
 

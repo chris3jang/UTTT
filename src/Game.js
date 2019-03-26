@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import TTT from './TTT';
 import TurnCounter from './TurnCounter.js';
-import './Game.css';
+import './css/Game.css';
 
 import openSocket from 'socket.io-client';
 const socket = openSocket('https://ulttitato.herokuapp.com/');
